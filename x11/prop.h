@@ -52,6 +52,8 @@ typedef struct
 	int HwJoyHat;
 	int HwJoyBtn[8];
 	int NoWaitMode;
+	int Stretched;
+	int Scanlines;
 	BYTE FrameRate;
 } Win68Conf;
 

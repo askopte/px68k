@@ -16,8 +16,20 @@ extern int rfd_sock;
 #define		SCREEN_WIDTH		768
 #define		SCREEN_HEIGHT		512
 
+#ifdef PANDORA
+#ifdef USE_OGLES11
 #define		FULLSCREEN_WIDTH	800
-#define		FULLSCREEN_HEIGHT	600
+#define		FULLSCREEN_HEIGHT	480
+#else
+#define         FULLSCREEN_WIDTH        800
+//SCREEN_WIDTH
+#define         FULLSCREEN_HEIGHT       600
+//SCREEN_HEIGHT
+#endif
+#else
+#define         FULLSCREEN_WIDTH        800
+#define         FULLSCREEN_HEIGHT       600
+#endif
 #define		FULLSCREEN_POSX		((FULLSCREEN_WIDTH - SCREEN_WIDTH) / 2)
 #define		FULLSCREEN_POSY		((FULLSCREEN_HEIGHT - SCREEN_HEIGHT) / 2)
 
@@ -38,7 +50,7 @@ extern	BYTE	FrameChanged;
 
 extern const BYTE PrgTitle[];
 
-#if defined(ANDROID) || TARGET_OS_IPHONE
+#if defined(USE_OGLES11)
 extern int realdisp_w, realdisp_h;
 #endif
 

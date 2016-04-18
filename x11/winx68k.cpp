@@ -60,6 +60,9 @@ int rfd_sock;
 #include "d68k.h"
 #endif
 
+#if defined(PANDORA) && defined(USE_OGLES11)
+#include "eglport.h"
+#endif
 //#include "../icons/keropi_mono.xbm"
 
 #define	APPNAME	"Keropi"
@@ -107,6 +110,17 @@ static int FrameSkipQueue = 0;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 SDL_Window *sdl_window;
 int realdisp_w, realdisp_h;
+#else
+#ifdef PANDORA
+int realdisp_w, realdisp_h;
+#endif
+#endif
+#ifdef PANDORA
+extern int fast_browse;
+extern int fast_up;
+extern int fast_down;
+extern int fast_left;
+extern int fast_right;
 #endif
 
 void
@@ -184,7 +198,7 @@ WinX68k_LoadROMs(void)
 	}
 
 	if (fp == 0) {
-		Error("BIOS ROM イメージが見つかりません.");
+		Error("BIOS ROM not found.");
 		return FALSE;
 	}
 
@@ -326,6 +340,9 @@ void WinX68k_Exec(void)
 	int clk_total, clkdiv, usedclk, hsync, clk_next, clk_count, clk_line=0;
 	int KeyIntCnt = 0, MouseIntCnt = 0;
 	DWORD t_start = timeGetTime(), t_end;
+
+	if ( Config.FrameRate == 0)
+		Config.FrameRate = 7;
 
 	if ( Config.FrameRate != 7 ) {
 		DispFrame = (DispFrame+1)%Config.FrameRate;
@@ -616,7 +633,6 @@ int main(int argc, char *argv[])
     puts(winx68k_dir);
 
 	LoadConfig();
-
 #ifndef NOSOUND
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		p6logd("SDL_Init error\n");		
@@ -633,13 +649,39 @@ int main(int argc, char *argv[])
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_WM_SetCaption(APPNAME" SDL", NULL);
 #ifndef PSP
-        if (SDL_SetVideoMode(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, 16, SDL_SWSURFACE) == NULL) {
+#if defined(PANDORA) && defined(USE_OGLES11)
+        if (SDL_SetVideoMode(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, 16, SDL_SWSURFACE | SDL_FULLSCREEN) == NULL) {
 #else
-        if (SDL_SetVideoMode(480, 272, 16, SDL_SWSURFACE) == NULL) {
+        if (SDL_SetVideoMode(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, 16, SDL_SWSURFACE) == NULL) {
+#endif
+#else
+        if (SDL_SetVideoMode(480, 272, 16, SDL_SWSURFACE | SDL_FULLSCREEN) == NULL) {
 #endif
 		puts("SDL_SetVideoMode() failed");
 		return 1;
 	}
+#ifdef PANDORA
+	//Hide mouse
+	SDL_ShowCursor(SDL_DISABLE);
+	realdisp_w = FULLSCREEN_WIDTH;
+	realdisp_h = FULLSCREEN_HEIGHT;
+#ifdef USE_OGLES11
+	EGL_Open(realdisp_w, realdisp_h);
+
+	glEnable(GL_TEXTURE_2D);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	//glViewport(0, 0, 800, 600); //ここを増やさないとOpenGLの画面はせまい
+	glViewport(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
+	// スマホやタブの実画面に関係なくOpenGLの描画領域を800x600とする。
+	// 800x600にした意味は特にない。
+	glOrthof(0, 800, 600, 0, -1, 1);
+	//  glOrthof(0, 1024, 0, 1024, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+#endif
+#endif
 #else
 #ifdef USE_OGLES11
 	SDL_DisplayMode sdl_dispmode;
@@ -808,7 +850,19 @@ int main(int argc, char *argv[])
 				goto end_loop;
 			case SDL_MOUSEMOTION:
 				p6logd("x:%d y:%d xrel:%d yrel:%d\n", ev.motion.x, ev.motion.y, ev.motion.xrel, ev.motion.yrel);
+#ifdef PANDORA
+				Mouse_Event(0, ev.motion.xrel, ev.motion.yrel);
+#endif
 				break;
+#ifdef PANDORA
+			// Mouse clic events
+			case SDL_MOUSEBUTTONDOWN:
+				Mouse_Event((ev.button.button==SDL_BUTTON_LEFT)?1:2, 1, 0);
+				break;
+                        case SDL_MOUSEBUTTONUP:
+                                Mouse_Event((ev.button.button==SDL_BUTTON_LEFT)?1:2, 0, 0);
+                                break;
+#endif
 #if defined(ANDROID) || TARGET_OS_IPHONE
 			case SDL_APP_WILLENTERBACKGROUND:
 				DSound_Stop();
@@ -869,8 +923,10 @@ int main(int argc, char *argv[])
 					break;
 				}
 #endif
+#ifndef NDEBUG
 				printf("keydown: 0x%x\n", ev.key.keysym.sym);
 				printf("font %d %d\n", FONT[100], FONT[101]);
+#endif
 				if (ev.key.keysym.sym == SDLK_F12) {
 					if (menu_mode == menu_out) {
 						menu_mode = menu_enter;
@@ -880,6 +936,26 @@ int main(int argc, char *argv[])
 						menu_mode = menu_out;
 					}
 				}
+#ifdef PANDORA
+				if (ev.key.keysym.sym == SDLK_RCTRL) {
+					fast_browse = 1;
+				}
+				if (ev.key.keysym.sym == SDLK_UP) {
+					fast_up = 1;
+				}
+				if (ev.key.keysym.sym == SDLK_DOWN) {
+					fast_down = 1;
+				}
+				if (ev.key.keysym.sym == SDLK_LEFT) {
+					fast_left = 1;
+				}
+				if (ev.key.keysym.sym == SDLK_RIGHT) {
+					fast_right = 1;
+				}
+                if (ev.key.keysym.sym == SDLK_F11) {
+					goto end_loop;
+				}
+#endif
 #ifdef WIN68DEBUG
 				if (ev.key.keysym.sym == SDLK_F10) {
 					traceflag ^= 1;
@@ -893,7 +969,26 @@ int main(int argc, char *argv[])
 				}
 				break;
 			case SDL_KEYUP:
+#ifndef NDEBUG
 				printf("keyup: 0x%x\n", ev.key.keysym.sym);
+#endif
+#ifdef PANDORA
+				if (ev.key.keysym.sym == SDLK_RCTRL) {
+					fast_browse = 0;
+				}
+				if (ev.key.keysym.sym == SDLK_UP) {
+					fast_up = 0;
+				}
+				if (ev.key.keysym.sym == SDLK_DOWN) {
+					fast_down = 0;
+				}
+				if (ev.key.keysym.sym == SDLK_LEFT) {
+					fast_left = 0;
+				}
+				if (ev.key.keysym.sym == SDLK_RIGHT) {
+					fast_right = 0;
+				}
+#endif
 				Keyboard_KeyUp(ev.key.keysym.sym);
 				break;
 			}
@@ -1022,7 +1117,9 @@ end_loop:
 	WinDraw_CleanupScreen();
 
 	SaveConfig();
-
+#if defined(PANDORA) && defined(USE_OGLES11)
+	EGL_Close();
+#endif
 #if defined(PSP)
 	puts("before end");
 	sceKernelExitGame();

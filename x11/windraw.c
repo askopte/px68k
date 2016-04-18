@@ -33,7 +33,9 @@
 #include <pspdisplay.h>
 #include <pspgu.h>
 #endif
-//#include <SDL_rotozoom.h>
+#ifdef USE_SDLGFX
+#include <SDL_rotozoom.h>
+#endif
 #include "winx68k.h"
 #include "winui.h"
 
@@ -47,6 +49,15 @@
 #include "tvram.h"
 #include "joystick.h"
 #include "keyboard.h"
+
+#ifdef PANDORA
+#include <GLES/egl.h>
+#include "eglport.h"
+#include <bc_cat.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#endif
 
 #if 0
 #include "../icons/keropi.xpm"
@@ -91,10 +102,44 @@ DWORD WindowY = 0;
 
 #ifdef USE_OGLES11
 static GLuint texid[11];
+static GLuint texScanlines;
 #endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 extern SDL_Window *sdl_window;
+#endif
+
+#if defined(PANDORA) && defined(USE_OGLES11)
+// Texture streaming...
+#ifndef GL_IMG_texture_stream
+#define GL_TEXTURE_STREAM_IMG                                   0x8C0D     
+#define GL_TEXTURE_NUM_STREAM_DEVICES_IMG                       0x8C0E     
+#define GL_TEXTURE_STREAM_DEVICE_WIDTH_IMG                      0x8C0F
+#define GL_TEXTURE_STREAM_DEVICE_HEIGHT_IMG                     0x8EA0     
+#define GL_TEXTURE_STREAM_DEVICE_FORMAT_IMG                     0x8EA1      
+#define GL_TEXTURE_STREAM_DEVICE_NUM_BUFFERS_IMG                0x8EA2     
+#endif
+#ifndef GL_IMG_texture_stream
+#define GL_IMG_texture_stream 1
+typedef void (GL_APIENTRYP PFNGLTEXBINDSTREAMIMGPROC) (GLint device, GLint deviceoffset);
+typedef const GLubyte *(GL_APIENTRYP PFNGLGETTEXSTREAMDEVICENAMEIMGPROC) (GLenum target);
+typedef void (GL_APIENTRYP PFNGLGETTEXSTREAMDEVICEATTRIBUTEIVIMGPROC) (GLenum target, GLenum pname, GLint *params);
+#endif
+#define NBR_BUFFER  1
+GLuint texw, texh;
+unsigned long buf_paddr[NBR_BUFFER];    // physical address
+char *buf_vaddr[NBR_BUFFER];            // virtual adress
+int    bcfd=-1;   // bc_cat handle
+int    streamtex;   // is texture streamming enabled?
+PFNGLTEXBINDSTREAMIMGPROC glTexBindStreamIMG = NULL;
+PFNGLGETTEXSTREAMDEVICEATTRIBUTEIVIMGPROC glGetTexAttrIMG = NULL;
+PFNGLGETTEXSTREAMDEVICENAMEIMGPROC glGetTexDeviceIMG = NULL;
+int bcdev_id;
+int bcdev_w, bcdev_h, bcdev_n;
+int bcdev_fmt;
+int stride;
+int curentidx;
+int buffersize;
 #endif
 
 void WinDraw_InitWindowSize(WORD width, WORD height)
@@ -293,6 +338,11 @@ int WinDraw_Init(void)
 	WindowX = 768;
 	WindowY = 512;
 
+#if defined(USE_OGLES11)
+        WinDraw_Pal16R = 0xf800;
+        WinDraw_Pal16G = 0x07e0;
+        WinDraw_Pal16B = 0x001f;
+#else
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	WinDraw_Pal16R = 0xf800;
 	WinDraw_Pal16G = 0x07e0;
@@ -303,11 +353,127 @@ int WinDraw_Init(void)
 	WinDraw_Pal16B = sdl_surface->format->Bmask;
 	printf("R: %x, G: %x, B: %x\n", WinDraw_Pal16R, WinDraw_Pal16G, WinDraw_Pal16B);
 #endif
+#endif
 
 #if defined(USE_OGLES11)
-	ScrBuf = malloc(1024*1024*2); // OpenGL ES 1.1 needs 2^x pixels
-	if (ScrBuf == NULL) {
-		return FALSE;
+#ifdef PANDORA
+    texw = 800;
+    texh = 600;
+    buffersize = 1024*1024*2;
+    // Prepare Texture streamming (or deactivate if not available)
+    streamtex = 1;
+    BCIO_package ioctl_var;
+    bc_buf_params_t buf_param;
+    bc_buf_ptr_t buf_pa;
+    // open bc_cat driver
+    if ((streamtex) && (bcfd==-1))
+        if ((bcfd = open("/dev/bc_cat", O_RDWR|O_NDELAY)) == -1) {
+            printf("ERROR: open %s failed\n", "/dev/bc_cat");
+            streamtex = 0;
+        }
+    // alloc memory
+    if (streamtex) {
+        buf_param.count = NBR_BUFFER;
+        buf_param.width = texw;
+        buf_param.height = texh;
+        buf_param.fourcc = BC_PIX_FMT_RGB565;
+        buf_param.type = BC_MEMORY_MMAP;
+        if (ioctl(bcfd, BCIOREQ_BUFFERS, &buf_param) != 0) {
+            printf("ERROR: BCIOREQ_BUFFERS failed\n");
+            streamtex = 0;
+        }
+    }
+    if (streamtex)
+    {
+        if (ioctl(bcfd, BCIOGET_BUFFERCOUNT, &ioctl_var) != 0) {
+            printf("ERROR: BCIOREQ_BUFFERCOUNT failed\n");
+            streamtex = 0;
+        }
+    }
+    if (streamtex)
+    {
+        if (ioctl_var.output == 0) {
+            printf("ERROR: no texture buffer available\n");
+            streamtex = 0;
+        }
+    }
+    // initialize gl extension
+    if (streamtex)
+    {
+        const GLubyte *glext;
+        const GLubyte *dev_name;
+        glext = glGetString(GL_EXTENSIONS);
+        if (!strstr((char *)glext, "GL_IMG_texture_stream")) {
+            printf("ERROR: GL_IMG_texture_stream not present\n");
+            streamtex = 0;
+        } else {
+            glTexBindStreamIMG =
+                (PFNGLTEXBINDSTREAMIMGPROC)eglGetProcAddress("glTexBindStreamIMG");
+            glGetTexAttrIMG = (PFNGLGETTEXSTREAMDEVICEATTRIBUTEIVIMGPROC)
+                eglGetProcAddress("glGetTexStreamDeviceAttributeivIMG");
+            glGetTexDeviceIMG = (PFNGLGETTEXSTREAMDEVICENAMEIMGPROC)
+                eglGetProcAddress("glGetTexStreamDeviceNameIMG");
+
+            if (!glTexBindStreamIMG || !glGetTexAttrIMG || !glGetTexDeviceIMG) {
+                printf("ERROR: problem with GL_IMG_texture_stream extension\n");
+                streamtex = 0;
+            } else {
+                dev_name = glGetTexDeviceIMG(bcdev_id);
+                if (!dev_name) {
+                    printf("ERROR: problem with getting the GL_IMG_texture_stream device\n");
+                    streamtex = 0;
+                } else {
+                    glGetTexAttrIMG(bcdev_id, GL_TEXTURE_STREAM_DEVICE_NUM_BUFFERS_IMG, &bcdev_n);
+                    glGetTexAttrIMG(bcdev_id, GL_TEXTURE_STREAM_DEVICE_WIDTH_IMG, &bcdev_w);
+                    glGetTexAttrIMG(bcdev_id, GL_TEXTURE_STREAM_DEVICE_HEIGHT_IMG, &bcdev_h);
+                    glGetTexAttrIMG(bcdev_id, GL_TEXTURE_STREAM_DEVICE_FORMAT_IMG, &bcdev_fmt);
+                    printf("\ndevice: %s num: %d, width: %d, height: %d, format: 0x%x\n",
+                        dev_name, bcdev_n, bcdev_w, bcdev_h, bcdev_fmt);
+                    stride = (bcdev_w-texw);
+                }
+            }
+
+        }
+
+    }
+    // setup filter
+    if (streamtex)
+    {
+        glTexParameterf(GL_TEXTURE_STREAM_IMG, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_STREAM_IMG, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    }
+    // Map the memory now
+    if (streamtex)    
+    {
+        for (int idx=0; idx<NBR_BUFFER; idx++) {
+            ioctl_var.input = idx;
+
+            if (ioctl(bcfd, BCIOGET_BUFFERPHYADDR, &ioctl_var) != 0) {
+                printf("ERROR: BCIOGET_BUFFERADDR failed\n");
+                streamtex = 0;
+            } else {
+                buf_paddr[idx] = ioctl_var.output;
+                buf_vaddr[idx] = (char *)mmap(NULL, buffersize,
+                                  PROT_READ | PROT_WRITE, MAP_SHARED,
+                                  bcfd, buf_paddr[idx]);
+
+                if (buf_vaddr[idx] == MAP_FAILED) {
+                    printf("ERROR: mmap failed\n");
+                    streamtex = 0;
+                }
+            }
+        }
+        curentidx = 0;
+    }
+    if (streamtex) {
+    	ScrBuf = (WORD*)buf_vaddr[0];
+    } else
+#endif
+    {
+		ScrBuf = malloc(1024*1024*2); // OpenGL ES 1.1 needs 2^x pixels
+		if (ScrBuf == NULL) {
+			return FALSE;
+		}
 	}
 
 	kbd_buffer = malloc(1024*1024*2); // OpenGL ES 1.1 needs 2^x pixels
@@ -316,6 +482,19 @@ int WinDraw_Init(void)
 	}
 
 	p6logd("kbd_buffer 0x%x", kbd_buffer);
+	// Scanlines texture
+	const static uint32_t SCANLINE_TEXTURE[] = { 0x00000000, 0xff000000 }; // RGBA
+	glGenTextures(1, &texScanlines);
+    glBindTexture(GL_TEXTURE_2D, texScanlines);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 1, 2, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE,
+                 SCANLINE_TEXTURE);
+    // Scanline setup completed
 
 	memset(texid, 0, sizeof(texid));
 	glGenTextures(11, &texid[0]);
@@ -361,7 +540,9 @@ int WinDraw_Init(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 1024, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, menu_buffer);
 
+#ifndef PANDORA
 	draw_kbd_to_tex();
+#endif
 
 	// ソフトウェアキーボード描画用テクスチャ。
 	glBindTexture(GL_TEXTURE_2D, texid[10]);
@@ -450,6 +631,7 @@ static void draw_texture(GLfloat *coor, GLfloat *vert)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+#if defined(ANDROID) || TARGET_OS_IPHONE
 void draw_button(GLuint texid, GLfloat x, GLfloat y, GLfloat s, GLfloat *tex, GLfloat *ver)
 {
 	glBindTexture(GL_TEXTURE_2D, texid);
@@ -475,6 +657,7 @@ void draw_all_buttons(GLfloat *tex, GLfloat *ver, GLfloat scale, int is_menu)
 		p++;
 	}
 }
+#endif
 #endif // USE_OGLES11
 
 void FASTCALL
@@ -504,9 +687,18 @@ WinDraw_Draw(void)
 	// アルファブレンドしない(上のテクスチャが下のテクスチャを隠す)
 	glBlendFunc(GL_ONE, GL_ZERO);
 
-	glBindTexture(GL_TEXTURE_2D, texid[0]);
-	//ScrBufから800x600の領域を切り出してテクスチャに転送
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 800, 600, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, ScrBuf);
+#ifdef PANDORA
+    if (streamtex) {
+    		glDisable(GL_TEXTURE_2D);
+            glEnable(GL_TEXTURE_STREAM_IMG);
+            glTexBindStreamIMG(bcdev_id, 0);
+    } else
+#endif
+    {
+		glBindTexture(GL_TEXTURE_2D, texid[0]);
+		//ScrBufから800x600の領域を切り出してテクスチャに転送
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 800, 600, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, ScrBuf);
+	}
 
 	// magic numberがやたら多いが、テクスチャのサイズが1024x1024
 	// OpenGLでの描画領域がglOrthof()で定義した800x600
@@ -515,15 +707,29 @@ WinDraw_Draw(void)
 
 	// Texture から必要な部分を抜き出す
 	// Texutre座標は0.0fから1.0fの間
-	SET_GLFLOATS(texture_coordinates,
-		     0.0f, (GLfloat)TextDotY/1024,
-		     0.0f, 0.0f,
-		     (GLfloat)TextDotX/1024, (GLfloat)TextDotY/1024,
-		     (GLfloat)TextDotX/1024, 0.0f);
-
+#if defined(PANDORA)
+	if (streamtex) {
+		SET_GLFLOATS(texture_coordinates,
+			     0.0f, (GLfloat)TextDotY/600,
+			     0.0f, 0.0f,
+			     (GLfloat)TextDotX/800, (GLfloat)TextDotY/600,
+			     (GLfloat)TextDotX/800, 0.0f);
+	}
+	else
+#endif
+	{
+		SET_GLFLOATS(texture_coordinates,
+			     0.0f, (GLfloat)TextDotY/1024,
+			     0.0f, 0.0f,
+			     (GLfloat)TextDotX/1024, (GLfloat)TextDotY/1024,
+			     (GLfloat)TextDotX/1024, 0.0f);
+	}
 	// 実機の解像度(realdisp_w x realdisp_h)に関係なく、
 	// 座標は800x600
-	w = (realdisp_h * 1.33333) / realdisp_w * 800;
+	if (Config.Stretched)
+		w = 800; //(realdisp_h * 1.33333) / realdisp_w * 800;
+	else
+		w = (realdisp_h * 1.33333) / realdisp_w * 800;
 	SET_GLFLOATS(vertices,
 		     (800.0f - w)/2, (GLfloat)600,
 		     (800.0f - w)/2, 0.0f,
@@ -531,9 +737,41 @@ WinDraw_Draw(void)
 		     (800.0f - w)/2 + w, 0.0f);
 
 	draw_texture(texture_coordinates, vertices);
+#ifdef PANDORA
+	if (streamtex) {
+        glDisable(GL_TEXTURE_STREAM_IMG);
+        glEnable(GL_TEXTURE_2D);
+    }
+#endif
+    // Draw Scanlines (if any)
+    if (Config.Scanlines) {
+        glColor4ub(255, 255, 255, (Config.Scanlines*64)-1);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBindTexture(GL_TEXTURE_2D, texScanlines);
+		{
+#ifdef PANDORA
+			// Fake Scanlines
+			SET_GLFLOATS(texture_coordinates,
+				     0.0f, 240.0f,
+				     0.0f, 0.0f,
+				     800, 240.0f,
+				     800, 0.0f);
+		}
+#else
+			SET_GLFLOATS(texture_coordinates,
+				     0.0f, TextDotY*0.5f,
+				     0.0f, 0.0f,
+				     TextDotX, TextDotY*0.5f,
+				     TextDotX, 0.0f);
+		}
+#endif
+		draw_texture(texture_coordinates, vertices);
+        glBlendFunc(GL_ONE, GL_ZERO);
+    }
 
 	// ソフトウェアキーボード描画
 
+#ifndef PANDORA
 	if (Keyboard_IsSwKeyboard()) {
 		glBindTexture(GL_TEXTURE_2D, texid[10]);
 		//kbd_bufferから800x600の領域を切り出してテクスチャに転送
@@ -559,17 +797,22 @@ WinDraw_Draw(void)
 
 		draw_texture(texture_coordinates, vertices);
 	}
-
+#endif
 	// 仮想パッド/ボタン描画
 
 	// アルファブレンドする(スケスケいやん)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
+#if defined(ANDROID) || TARGET_OS_IPHONE
 	draw_all_buttons(texture_coordinates, vertices, (GLfloat)WinUI_get_vkscale(), 0);
-
+#endif
 	//	glDeleteTextures(1, &texid);
 
+#ifdef PANDORA
+	EGL_SwapBuffers();
+#else
 	SDL_GL_SwapWindow(sdl_window);
+#endif
 
 #elif defined(PSP)
 	sceGuStart(GU_DIRECT, list);
@@ -1778,9 +2021,15 @@ static void ogles11_draw_menu(void)
 
 	draw_texture(texture_coordinates, vertices);
 
+#if defined(ANDROID) || TARGET_OS_IPHONE
 	draw_all_buttons(texture_coordinates, vertices, (GLfloat)WinUI_get_vkscale(), 1);
+#endif
 
+#ifdef PANDORA
+	EGL_SwapBuffers();
+#else
 	SDL_GL_SwapWindow(sdl_window);
+#endif
 }
 #endif
 
@@ -1890,11 +2139,22 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 				draw_str(" -- no disk --");
 			} else {
 				// 先頭のカレントディレクトリ名を表示しない
+#ifdef PANDORA
+				char p2[MAX_PATH+1];
+				if (!strncmp(cur_dir_str, p, cur_dir_slen)) {
+					strncpy(p2, p + cur_dir_slen, sizeof(p2));
+				} else {
+					strncpy(p2, p, sizeof(p2));
+				}
+				p2[40] = '\0';
+				draw_str(p2);
+#else
 				if (!strncmp(cur_dir_str, p, cur_dir_slen)) {
 					draw_str(p + cur_dir_slen);
 				} else {
 					draw_str(p);
 				}
+#endif
 			}
 		} else {
 			draw_str(menu_items[i + mkey_pos][mval_y[i + mkey_pos]]);
@@ -1974,7 +2234,17 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 		// ディレクトリだったらファイル名を[]で囲う
 		set_mlocateC(3, i + 2);
 		if (mfl->type[i + mfl->ptr]) draw_str("[");
+#ifdef PANDORA
+		char p2[MAX_PATH+1];
+		strncpy(p2, mfl->name[i + mfl->ptr], sizeof(p2));
+		if (mfl->type[i + mfl->ptr]) 
+			p2[54] = '\0';
+		else
+			p2[56] = '\0';
+		draw_str(p2);
+#else
 		draw_str(mfl->name[i + mfl->ptr]);
+#endif
 		if (mfl->type[i + mfl->ptr]) draw_str("]");
 	}
 
@@ -2012,7 +2282,7 @@ void WinDraw_ClearMenuBuffer(void)
 
 /********** ソフトウェアキーボード描画 **********/
 
-#if defined(PSP) || defined(USE_OGLES11)
+#if defined(PSP) || defined(ANDOIRD)
 
 #if defined(PSP)
 // display width 480, buffer width 512

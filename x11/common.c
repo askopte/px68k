@@ -30,6 +30,9 @@ void Error(const char* s)
 // log for debug
 void p6logd(const char *fmt, ...)
 {
+#ifdef NDEBUG
+	return;
+#else
 	va_list args;
 
 	va_start(args, fmt);
@@ -42,5 +45,6 @@ void p6logd(const char *fmt, ...)
 	printf("%s", p6l_buf);
 #else
 	printf("%s", p6l_buf);
+#endif
 #endif
 }

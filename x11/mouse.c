@@ -59,7 +59,9 @@ void Mouse_Init(void)
 // ----------------------------------
 void Mouse_Event(int param, float dx, float dy)
 {
+#ifndef NDEBUG
 	printf("ME(): %f %f\n", dx, dy);
+#endif
 
 	if (MouseSW) {
 		switch (param) {
@@ -78,6 +80,10 @@ void Mouse_Event(int param, float dx, float dy)
 				MouseStat |= 2;
 			else
 				MouseStat &= 0xfd;
+			break;
+		case 3: // mouse move, absolute pos
+			MouseDX = dx;
+			MouseDY = dy;
 			break;
 		default:
 			break;

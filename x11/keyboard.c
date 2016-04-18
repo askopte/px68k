@@ -498,9 +498,11 @@ Keyboard_KeyDown(DWORD wp)
 		return;
 	}
 
+#ifndef NDEBUG
 	printf("Keyboard_KeyDown: ");
 	printf("wp=0x%x, code=0x%x\n", wp, code);
 	printf("SDLK_UP: 0x%x", SDLK_UP);
+#endif
 
 #if 0
 	if (code != NC) {
@@ -515,11 +517,14 @@ Keyboard_KeyDown(DWORD wp)
 	send_keycode(code, P6K_DOWN);
 #endif
 
+#ifndef NDEBUG
 	printf("JoyKeyState: 0x%x\n", JoyKeyState);
-
+#endif
 	switch (wp) {
 	case SDLK_UP:
+#ifndef NDEBUG
 		puts("key up");
+#endif
 		if (!(JoyKeyState&JOY_DOWN))
 			JoyKeyState |= JOY_UP;
 		break;
@@ -539,16 +544,28 @@ Keyboard_KeyDown(DWORD wp)
 			JoyKeyState |= JOY_RIGHT;
 		break;
 
+#ifdef PANDORA
+	case SDLK_PAGEDOWN:
+#else
 	case SDLK_z:
+#endif
+#ifndef NDEBUG
 		puts("key z");
+#endif
 		if (Config.JoyKeyReverse)
 			JoyKeyState |= JOY_TRG2;
 		else
 			JoyKeyState |= JOY_TRG1;
 		break;
 
+#ifdef PANDORA
+	case SDLK_END:
+#else
 	case SDLK_x:
+#endif
+#ifndef NDEBUG
 		puts("key x");
+#endif
 		if (Config.JoyKeyReverse)
 			JoyKeyState |= JOY_TRG1;
 		else
@@ -592,7 +609,9 @@ Keyboard_KeyUp(DWORD wp)
 	send_keycode(code, P6K_UP);
 #endif
 
+#ifndef NDEBUG
 	printf("JoyKeyState: 0x%x\n", JoyKeyState);
+#endif
 
 	switch(wp) {
 	case SDLK_UP:
@@ -611,14 +630,22 @@ Keyboard_KeyUp(DWORD wp)
 		JoyKeyState &= ~JOY_RIGHT;
 		break;
 
+#ifdef PANDORA
+	case SDLK_PAGEDOWN:
+#else
 	case SDLK_z:
+#endif
 		if (Config.JoyKeyReverse)
 			JoyKeyState &= ~JOY_TRG2;
 		else
 			JoyKeyState &= ~JOY_TRG1;
 		break;
 
+#ifdef PANDORA
+	case SDLK_END:
+#else
 	case SDLK_x:
+#endif
 		if (Config.JoyKeyReverse)
 			JoyKeyState &= ~JOY_TRG1;
 		else
@@ -637,7 +664,9 @@ void
 Keyboard_Int(void)
 {
 	if (KeyBufRP != KeyBufWP) {
+#ifndef NDEBUG
 		printf("KeyBufRP:%d, KeyBufWP:%d\n", KeyBufRP, KeyBufWP);
+#endif
 		if (!KeyIntFlag) {
 			LastKey = KeyBuf[KeyBufRP];
 			KeyBufRP = ((KeyBufRP+1)&(KeyBufSize-1));
@@ -651,7 +680,7 @@ Keyboard_Int(void)
 
 /********** ソフトウェアキーボード **********/
 
-#if defined(PSP) || defined(USE_OGLES11)
+#if defined(PSP) || defined(ANDROID)
 
 // 選択しているキーの座標 (初期値'Q')
 int  kbd_kx = 1, kbd_ky = 2;
@@ -883,7 +912,7 @@ int Keyboard_IsSwKeyboard(void)
 {
 #if defined(PSP)
 	return skbd_mode;
-#elif defined(USE_OGLES11)
+#elif defined(ANDROID)
 	if (kbd_x < 700) {
 		return TRUE;
 	} else {

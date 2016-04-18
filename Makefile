@@ -34,10 +34,12 @@ CDEBUGFLAGS+= -DNO_MERCURY
 #
 # for Opt.
 #
-# CDEBUGFLAGS= -O3
-# CDEBUGFLAGS+= -funroll-loops
-# CDEBUGFLAGS+= -fomit-frame-pointer
-# CDEBUGFLAGS+= -ffast-math
+CDEBUGFLAGS = -O2
+CDEBUGFLAGS+= -funroll-loops
+CDEBUGFLAGS+= -fomit-frame-pointer
+CDEBUGFLAGS+= -ffast-math
+CDEBUGFLAGS+= -ftree-vectorize
+CDEBUGFLAGS+= -DNDEBUG -g
 
 # CDEBUGFLAGS+= -march=pentium-m
 # CDEBUGFLAGS+= -msse -mfpmath=sse
@@ -73,7 +75,16 @@ endif
 ifeq ($(shell uname -m),armv6l)
 	MOPT=
 else
+ifeq ($(shell uname -m),armv7l)
+	CDEBUGFLAGS+= -DPANDORA
+	CDEBUGFLAGS+= -DUSE_OGLES11
+	SDL_LIB= `$(SDL_CONFIG) --libs`
+	SDL_LIB+= -lGLES_CM -lEGL
+        MOPT= -mcpu=cortex-a8 -mfpu=neon -fsigned-char -fsingle-precision-constant
+	# -flto -flto-odr-type-merging
+else
 	MOPT= -m32
+endif
 endif
 
 LDLIBS = -lm
@@ -97,6 +108,10 @@ X11OBJS= x11/joystick.o x11/juliet.o x11/keyboard.o x11/mouse.o x11/prop.o x11/s
 X11CXXOBJS= x11/winx68k.o
 
 WIN32APIOBJS= win32api/dosio.o win32api/fake.o win32api/peace.o
+
+ifeq ($(shell uname -m),armv7l)
+	X11OBJS+= x11/eglport.o
+endif
 
 COBJS=		$(X68KOBJS) $(X11OBJS) $(WIN32APIOBJS) $(CPUOBJS)
 CXXOBJS=	$(FMGENOBJS) $(X11CXXOBJS)

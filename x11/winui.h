@@ -19,7 +19,7 @@ void send_key(void);
 
 enum MenuState {ms_key, ms_value, ms_file, ms_hwjoy_set};
 
-#define MFL_MAX 1000
+#define MFL_MAX 4000
 
 struct menu_flist {
 	char name[MFL_MAX][MAX_PATH];

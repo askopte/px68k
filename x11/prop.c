@@ -196,6 +196,9 @@ set_dir:
 	if (homepath == 0)
 		homepath = ".";
 
+#ifdef PANDORA
+        snprintf(path, len, ".");
+#else
 	snprintf(path, len, "%s/%s", homepath, ".keropi");
 	if (stat(path, &sb) < 0) {
 		if (mkdir(path, 0700) < 0) {
@@ -208,6 +211,7 @@ set_dir:
 			return 1;
 		}
 	}
+#endif
 	snprintf(winx68k_ini, sizeof(winx68k_ini), "%s/%s", path, "config");
 	if (stat(winx68k_ini, &sb) >= 0) {
 		if (sb.st_mode & S_IFDIR) {
@@ -272,7 +276,11 @@ void LoadConfig(void)
 	GetPrivateProfileString(ini_title, "JoySwap", "0", buf, CFGLEN, winx68k_ini);
 	Config.JoySwap = solveBOOL(buf);
 
+#ifdef PANDORA
+        GetPrivateProfileString(ini_title, "JoyKey", "1", buf, CFGLEN, winx68k_ini);
+#else
 	GetPrivateProfileString(ini_title, "JoyKey", "0", buf, CFGLEN, winx68k_ini);
+#endif
 	Config.JoyKey = solveBOOL(buf);
 	GetPrivateProfileString(ini_title, "JoyKeyReverse", "0", buf, CFGLEN, winx68k_ini);
 	Config.JoyKeyReverse = solveBOOL(buf);
@@ -320,13 +328,20 @@ void LoadConfig(void)
 
 	Config.VbtnSwap = GetPrivateProfileInt(ini_title, "VbtnSwap", 0, winx68k_ini);
 
+#ifdef PANDORA
+    Config.JoyOrMouse = GetPrivateProfileInt(ini_title, "JoyOrMouse", 1, winx68k_ini);
+#else
 	Config.JoyOrMouse = GetPrivateProfileInt(ini_title, "JoyOrMouse", 0, winx68k_ini);
-
+#endif
 	Config.HwJoyAxis[0] = GetPrivateProfileInt(ini_title, "HwJoyAxis0", 0, winx68k_ini);
 
 	Config.HwJoyAxis[1] = GetPrivateProfileInt(ini_title, "HwJoyAxis1", 1, winx68k_ini);
 
 	Config.HwJoyHat = GetPrivateProfileInt(ini_title, "HwJoyHat", 0, winx68k_ini);
+
+	Config.Stretched = GetPrivateProfileInt(ini_title, "Stretched", 0, winx68k_ini);
+
+	Config.Scanlines = GetPrivateProfileInt(ini_title, "Scanlines", 0, winx68k_ini);
 
 	for (i = 0; i < 8; i++) {
 		sprintf(buf, "HwJoyBtn%d", i);
@@ -492,6 +507,12 @@ void SaveConfig(void)
 		sprintf(buf, "HDD%d", i);
 		WritePrivateProfileString(ini_title, buf, Config.HDImage[i], winx68k_ini);
 	}
+
+	wsprintf(buf, "%d", Config.Stretched);
+	WritePrivateProfileString(ini_title, "Stretched", buf, winx68k_ini);
+
+	wsprintf(buf, "%d", Config.Scanlines);
+	WritePrivateProfileString(ini_title, "Scanlines", buf, winx68k_ini);
 
 #if 0
 	fp = File_OpenCurDir(KEYCONFFILE);
