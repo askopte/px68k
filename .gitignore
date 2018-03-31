@@ -13,4 +13,6 @@ px68k-ios/px68k-ios.xcodeproj/xcuserdata
 px68k
 *.dat
 config
+*.dim
+*.tgz
 
