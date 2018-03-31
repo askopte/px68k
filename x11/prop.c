@@ -63,6 +63,9 @@ extern char joyname[2][MAX_PATH];
 extern char joybtnname[2][MAX_BUTTON][MAX_PATH];
 extern BYTE joybtnnum[2];
 
+extern DWORD ram_size;
+extern int clockmhz;
+
 #define CFGLEN MAX_PATH
 
 #if 0
@@ -370,6 +373,9 @@ void LoadConfig(void)
 		GetPrivateProfileString(ini_title, buf, "", Config.HDImage[i], MAX_PATH, winx68k_ini);
 	}
 
+	clockmhz = GetPrivateProfileInt(ini_title, "ClockMHz", 10, winx68k_ini);
+	ram_size = 0x100000*GetPrivateProfileInt(ini_title, "RamSize", 2, winx68k_ini);
+
 #if 0
 	fp = File_OpenCurDir(KEYCONFFILE);
 	if (fp)
@@ -514,6 +520,11 @@ void SaveConfig(void)
 	wsprintf(buf, "%d", Config.Scanlines);
 	WritePrivateProfileString(ini_title, "Scanlines", buf, winx68k_ini);
 
+	wsprintf(buf, "%d", clockmhz);
+	WritePrivateProfileString(ini_title, "ClockMHz", buf, winx68k_ini);
+
+	wsprintf(buf, "%d", ram_size/0x100000);
+	WritePrivateProfileString(ini_title, "RamSize", buf, winx68k_ini);
 #if 0
 	fp = File_OpenCurDir(KEYCONFFILE);
 	if (!fp)
