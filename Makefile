@@ -14,7 +14,7 @@ CDEBUGFLAGS = -g -O0 -fno-strict-aliasing
 #
 # enable SDL_gfx
 #
-CDEBUGFLAGS+= -DUSE_SDLGFX
+#CDEBUGFLAGS+= -DUSE_SDLGFX
 
 #
 # disable sound
@@ -69,7 +69,8 @@ SDL_INCLUDE=	`$(SDL_CONFIG) --cflags`
 ifdef SDL2
 SDL_LIB=	`$(SDL_CONFIG) --libs` -lSDL2_gfx
 else
-SDL_LIB=	`$(SDL_CONFIG) --libs` -lSDL_gfx
+SDL_LIB=	`$(SDL_CONFIG) --libs`
+# -lSDL_gfx
 endif
 
 ifdef CYCLONE
