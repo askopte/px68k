@@ -207,7 +207,7 @@ void WinDraw_ChangeSize(void)
 			WindowY = TextDotY;
 		dif = WindowX - WindowY;
 		if ((dif > -32) && (dif < 32)) {
-			// ÀµÊý·Á¤Ë¶á¤¤²èÌÌ¤Ê¤é¡¢¤È¤·¤Æ¤ª¤³¤¦
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¶á¤¤ï¿½ï¿½ï¿½Ì¤Ê¤é¡¢ï¿½È¤ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½
 			WindowX = (int)(WindowX * 1.25);
 		}
 		break;
@@ -283,8 +283,8 @@ void WinDraw_HideSplash(void)
           |  ScrBufR ||512*2byte (x68k screen size: 756x512)
           |  (right) |V
 0x0418c000+----------+---------+A
-          |²¾ÁÛ¥­¡¼¥Ü¡¼¥ÉÍÑ    || 512*256*2byte
-          |    ¤Ë»È¤¦¤«¤âÎÎ°è  |V
+          |ï¿½ï¿½ï¿½Û¥ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½ï¿½ï¿½    || 512*256*2byte
+          |    ï¿½Ë»È¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î°ï¿½  |V
 0x041cc000+--------------------+
           |                    |
           | Virtexes           |
@@ -508,24 +508,24 @@ int WinDraw_Init(void)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 1024, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, ScrBuf);
 
 	WORD BtnTex[32*32];
-	//¤È¤ê¤¢¤¨¤ºÇö¤á¤ÎÎÐ¤Ç¡£
+	//ï¿½È¤ê¤¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¤Ç¡ï¿½
 	for (i = 0; i < 32*32; i++) {
 		BtnTex[i] = 0x03e0;
 	}
 
-	// ¥Ü¥¿¥óÍÑ¥Æ¥¯¥¹¥Á¥ã¡£¤È¤ê¤¢¤¨¤ºÁ´ÉôÆ±¤¸¿§¡£
+	// ï¿½Ü¥ï¿½ï¿½ï¿½ï¿½Ñ¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã¡£ï¿½È¤ê¤¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (i = 1; i < 9; i++) {
 		glBindTexture(GL_TEXTURE_2D, texid[i]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 		if (i == 7) {
-			// ¤È¤ê¤¢¤¨¤º¥­¡¼¥Ü¡¼¥Éon¥Ü¥¿¥ó¤ÏÇö¤á¤Î²«¿§¤Ç¡£
+			// ï¿½È¤ê¤¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½onï¿½Ü¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½Ç¡ï¿½
 			for (j = 0; j < 32*32; j++) {
 				BtnTex[j] = (0x7800 | 0x03e0);
 			}
 		}
 		if (i == 8) {
-			// ¤È¤ê¤¢¤¨¤ºmenu on¥Ü¥¿¥ó¤ÏÇö¤á¤ÎÇò¿§¤Ç¡£
+			// ï¿½È¤ê¤¢ï¿½ï¿½ï¿½ï¿½menu onï¿½Ü¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò¿§¤Ç¡ï¿½
 			for (j = 0; j < 32*32; j++) {
 				BtnTex[j] = (0x7800 | 0x03e0 | 0x0f);
 			}
@@ -534,7 +534,7 @@ int WinDraw_Init(void)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 32, 32, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, BtnTex);
 	}
 
-	// ¥á¥Ë¥å¡¼ÉÁ²èÍÑ¥Æ¥¯¥¹¥Á¥ã¡£
+	// ï¿½ï¿½Ë¥å¡¼ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã¡£
 	glBindTexture(GL_TEXTURE_2D, texid[9]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -544,7 +544,7 @@ int WinDraw_Init(void)
 	draw_kbd_to_tex();
 #endif
 
-	// ¥½¥Õ¥È¥¦¥§¥¢¥­¡¼¥Ü¡¼¥ÉÉÁ²èÍÑ¥Æ¥¯¥¹¥Á¥ã¡£
+	// ï¿½ï¿½ï¿½Õ¥È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã¡£
 	glBindTexture(GL_TEXTURE_2D, texid[10]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -635,9 +635,9 @@ static void draw_texture(GLfloat *coor, GLfloat *vert)
 void draw_button(GLuint texid, GLfloat x, GLfloat y, GLfloat s, GLfloat *tex, GLfloat *ver)
 {
 	glBindTexture(GL_TEXTURE_2D, texid);
-	// Texture ¤«¤éÉ¬Í×¤ÊÉôÊ¬¤òÈ´¤­½Ð¤¹(32x32¤òÁ´Éô»È¤¦)
+	// Texture ï¿½ï¿½ï¿½ï¿½É¬ï¿½×¤ï¿½ï¿½ï¿½Ê¬ï¿½ï¿½È´ï¿½ï¿½ï¿½Ð¤ï¿½(32x32ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½)
 	SET_GLFLOATS(tex, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	// sÇÜ¤Ë¤·¤ÆÅ½¤êÉÕ¤±¤ë
+	// sï¿½Ü¤Ë¤ï¿½ï¿½ï¿½Å½ï¿½ï¿½ï¿½Õ¤ï¿½ï¿½ï¿½
 	SET_GLFLOATS(ver, x, y + 32.0f * s, x, y, x + 32.0f * s, y + 32.0f * s, x + 32.0f * s, y + 0.0f);
 	draw_texture(tex, ver);
 }
@@ -649,7 +649,7 @@ void draw_all_buttons(GLfloat *tex, GLfloat *ver, GLfloat scale, int is_menu)
 
 	p = Joystick_get_btn_points(scale);
 
-	// ²¾ÁÛ¥­¡¼¤Ïtexid: 1¤«¤é6¤Þ¤Ç¡¢¥­¡¼¥Ü¡¼¥Éon¥Ü¥¿¥ó¤¬7¡¢menu¥Ü¥¿¥ó¤¬8
+	// ï¿½ï¿½ï¿½Û¥ï¿½ï¿½ï¿½ï¿½ï¿½texid: 1ï¿½ï¿½ï¿½ï¿½6ï¿½Þ¤Ç¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½onï¿½Ü¥ï¿½ï¿½ï¿½7ï¿½ï¿½menuï¿½Ü¥ï¿½ï¿½ï¿½8
 	for (i = 1; i < 9; i++) {
 		if (need_Vpad() || i >= 7 || (Config.JoyOrMouse && i >= 5)) {
 			draw_button(texid[i], p->x, p->y, scale, tex, ver);
@@ -684,7 +684,7 @@ WinDraw_Draw(void)
 
 	glEnable(GL_BLEND);
 
-	// ¥¢¥ë¥Õ¥¡¥Ö¥ì¥ó¥É¤·¤Ê¤¤(¾å¤Î¥Æ¥¯¥¹¥Á¥ã¤¬²¼¤Î¥Æ¥¯¥¹¥Á¥ã¤ò±£¤¹)
+	// ï¿½ï¿½ï¿½ï¿½Õ¥ï¿½ï¿½Ö¥ï¿½ï¿½É¤ï¿½ï¿½Ê¤ï¿½(ï¿½ï¿½Î¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã¤¬ï¿½ï¿½ï¿½Î¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò±£¤ï¿½)
 	glBlendFunc(GL_ONE, GL_ZERO);
 
 #ifdef PANDORA
@@ -696,17 +696,17 @@ WinDraw_Draw(void)
 #endif
     {
 		glBindTexture(GL_TEXTURE_2D, texid[0]);
-		//ScrBuf¤«¤é800x600¤ÎÎÎ°è¤òÀÚ¤ê½Ð¤·¤Æ¥Æ¥¯¥¹¥Á¥ã¤ËÅ¾Á÷
+		//ScrBufï¿½ï¿½ï¿½ï¿½800x600ï¿½ï¿½ï¿½Î°ï¿½ï¿½ï¿½Ú¤ï¿½Ð¤ï¿½ï¿½Æ¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¾ï¿½ï¿½
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 800, 600, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, ScrBuf);
 	}
 
-	// magic number¤¬¤ä¤¿¤éÂ¿¤¤¤¬¡¢¥Æ¥¯¥¹¥Á¥ã¤Î¥µ¥¤¥º¤¬1024x1024
-	// OpenGL¤Ç¤ÎÉÁ²èÎÎ°è¤¬glOrthof()¤ÇÄêµÁ¤·¤¿800x600
+	// magic numberï¿½ï¿½ï¿½ä¤¿ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1024x1024
+	// OpenGLï¿½Ç¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î°è¤¬glOrthof()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½800x600
 
-	// X68K ²èÌÌÉÁ²è
+	// X68K ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	// Texture ¤«¤éÉ¬Í×¤ÊÉôÊ¬¤òÈ´¤­½Ð¤¹
-	// TexutreºÂÉ¸¤Ï0.0f¤«¤é1.0f¤Î´Ö
+	// Texture ï¿½ï¿½ï¿½ï¿½É¬ï¿½×¤ï¿½ï¿½ï¿½Ê¬ï¿½ï¿½È´ï¿½ï¿½ï¿½Ð¤ï¿½
+	// Texutreï¿½ï¿½É¸ï¿½ï¿½0.0fï¿½ï¿½ï¿½ï¿½1.0fï¿½Î´ï¿½
 #if defined(PANDORA)
 	if (streamtex) {
 		SET_GLFLOATS(texture_coordinates,
@@ -724,8 +724,8 @@ WinDraw_Draw(void)
 			     (GLfloat)TextDotX/1024, (GLfloat)TextDotY/1024,
 			     (GLfloat)TextDotX/1024, 0.0f);
 	}
-	// ¼Âµ¡¤Î²òÁüÅÙ(realdisp_w x realdisp_h)¤Ë´Ø·¸¤Ê¤¯¡¢
-	// ºÂÉ¸¤Ï800x600
+	// ï¿½Âµï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½(realdisp_w x realdisp_h)ï¿½Ë´Ø·ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½
+	// ï¿½ï¿½É¸ï¿½ï¿½800x600
 	if (Config.Stretched)
 		w = 800; //(realdisp_h * 1.33333) / realdisp_w * 800;
 	else
@@ -769,24 +769,24 @@ WinDraw_Draw(void)
         glBlendFunc(GL_ONE, GL_ZERO);
     }
 
-	// ¥½¥Õ¥È¥¦¥§¥¢¥­¡¼¥Ü¡¼¥ÉÉÁ²è
+	// ï¿½ï¿½ï¿½Õ¥È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 #ifndef PANDORA
 	if (Keyboard_IsSwKeyboard()) {
 		glBindTexture(GL_TEXTURE_2D, texid[10]);
-		//kbd_buffer¤«¤é800x600¤ÎÎÎ°è¤òÀÚ¤ê½Ð¤·¤Æ¥Æ¥¯¥¹¥Á¥ã¤ËÅ¾Á÷
+		//kbd_bufferï¿½ï¿½ï¿½ï¿½800x600ï¿½ï¿½ï¿½Î°ï¿½ï¿½ï¿½Ú¤ï¿½Ð¤ï¿½ï¿½Æ¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¾ï¿½ï¿½
 		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 800, 600, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, kbd_buffer);
 
-		// Texture ¤«¤éÉ¬Í×¤ÊÉôÊ¬¤òÈ´¤­½Ð¤¹
-		// TexutreºÂÉ¸¤Ï0.0f¤«¤é1.0f¤Î´Ö
+		// Texture ï¿½ï¿½ï¿½ï¿½É¬ï¿½×¤ï¿½ï¿½ï¿½Ê¬ï¿½ï¿½È´ï¿½ï¿½ï¿½Ð¤ï¿½
+		// Texutreï¿½ï¿½É¸ï¿½ï¿½0.0fï¿½ï¿½ï¿½ï¿½1.0fï¿½Î´ï¿½
 		SET_GLFLOATS(texture_coordinates,
 			     0.0f, (GLfloat)kbd_h/1024,
 			     0.0f, 0.0f,
 			     (GLfloat)kbd_w/1024, (GLfloat)kbd_h/1024,
 			     (GLfloat)kbd_w/1024, 0.0f);
 
-		// ¼Âµ¡¤Î²òÁüÅÙ(realdisp_w x realdisp_h)¤Ë´Ø·¸¤Ê¤¯¡¢
-		// ºÂÉ¸¤Ï800x600
+		// ï¿½Âµï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½(realdisp_w x realdisp_h)ï¿½Ë´Ø·ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½
+		// ï¿½ï¿½É¸ï¿½ï¿½800x600
 
 		float kbd_scale = 0.8;
 		SET_GLFLOATS(vertices,
@@ -798,9 +798,9 @@ WinDraw_Draw(void)
 		draw_texture(texture_coordinates, vertices);
 	}
 #endif
-	// ²¾ÁÛ¥Ñ¥Ã¥É/¥Ü¥¿¥óÉÁ²è
+	// ï¿½ï¿½ï¿½Û¥Ñ¥Ã¥ï¿½/ï¿½Ü¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	// ¥¢¥ë¥Õ¥¡¥Ö¥ì¥ó¥É¤¹¤ë(¥¹¥±¥¹¥±¤¤¤ä¤ó)
+	// ï¿½ï¿½ï¿½ï¿½Õ¥ï¿½ï¿½Ö¥ï¿½ï¿½É¤ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 #if defined(ANDROID) || TARGET_OS_IPHONE
@@ -821,7 +821,7 @@ WinDraw_Draw(void)
 	sceGuClearDepth(0);
 	sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
 
-	// º¸È¾Ê¬
+	// ï¿½ï¿½È¾Ê¬
 	vtxl->u = 0;
 	vtxl->v = 0;
 	vtxl->color = 0;
@@ -845,7 +845,7 @@ WinDraw_Draw(void)
 	sceGuDrawArray(GU_SPRITES, GU_TEXTURE_16BIT|GU_COLOR_5650|GU_VERTEX_16BIT|GU_TRANSFORM_2D, 2, 0, vtxl);
 
 	if (TextDotX > 512) {
-		// ±¦È¾Ê¬
+		// ï¿½ï¿½È¾Ê¬
 		vtxr->u = 0;
 		vtxr->v = 0;
 		vtxr->color = 0;
@@ -893,7 +893,7 @@ WinDraw_Draw(void)
 
 	sceGuSwapBuffers();
 
-#else // OpenGL ES Ì¤»ÈÍÑ
+#else // OpenGL ES Ì¤ï¿½ï¿½ï¿½ï¿½
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	sdl_surface = SDL_GetWindowSurface(sdl_window);
@@ -929,11 +929,11 @@ WinDraw_Draw(void)
 	DWORD *dst32, dat32;
 
 	Bpp = sdl_surface->format->BytesPerPixel;
-	// 2ÇÜ¤Ë³ÈÂç¤¹¤ë
+	// 2ï¿½Ü¤Ë³ï¿½ï¿½ç¤¹ï¿½ï¿½
 	if (TextDotX <= 256 && TextDotY <= 256) {
 		for (y = 0; y < 256; y++) {
 			p = ScrBuf + 800 * y;
-			// surface->pixels¤Ïvoid *
+			// surface->pixelsï¿½ï¿½void *
 			dst16 = sdl_surface->pixels + sdl_surface->w * Bpp * y * 2;
 			dst32 = (DWORD *)dst16;
 			for (x = 0; x < 256; x++) {
@@ -957,14 +957,14 @@ WinDraw_Draw(void)
 					dst16 -= sdl_surface->w;
 					dst16 += 2;
 				} else {
-					// xxx Ì¤¥µ¥Ý¡¼¥È
+					// xxx Ì¤ï¿½ï¿½ï¿½Ý¡ï¿½ï¿½ï¿½
 				}
 			}
 		}
 	} else {
 		for (y = 0; y < 512; y++) {
 			p = ScrBuf + 800 * y;
-			// surface->pixels¤Ïvoid *
+			// surface->pixelsï¿½ï¿½void *
 			dst16 = sdl_surface->pixels + sdl_surface->w * Bpp * y;
 			dst32 = (DWORD *)dst16;
 			for (x = 0; x < 800; x++) {
@@ -1000,11 +1000,11 @@ WinDraw_Draw(void)
 #ifdef FULLSCREEN_WIDTH
 #undef FULLSCREEN_WIDTH
 #endif
-//PSP¤Î¥Æ¥¯¥¹¥Á¥ã¤Ï°ìÊÕ¤¬ºÇÂç512¤Ê¤Î¤Ç¡¢X68000¤Î768x512²èÌÌ¤ò
-//512x512¤È256x512¤Îº¸±¦Æó¤Ä¤ËÊ¬¤±¤ë¡£
-//°Ê²¼¤ÎDrawLine·Ï¤Î´Ø¿ô½èÍý¤âPSP¤Ïº¸±¦¤Î¥Æ¥¯¥¹¥Á¥ã¤òÊÌ¡¹¤Ë
-//½èÍý¤·¤Ê¤±¤ì¤Ð¤Ê¤é¤Ê¤¤¡£
-//¤È¤¤¤¦¤³¤È¤Ç¡¢°Ê²¼¤Îdefine¤Ïº¸Â¦¥Æ¥¯¥¹¥Á¥ã¤Î²£Éý¤òÉ½¤·¤Æ¤¤¤ë¡£
+//PSPï¿½Î¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½Õ¤ï¿½ï¿½ï¿½ï¿½ï¿½512ï¿½Ê¤Î¤Ç¡ï¿½X68000ï¿½ï¿½768x512ï¿½ï¿½ï¿½Ì¤ï¿½
+//512x512ï¿½ï¿½256x512ï¿½Îºï¿½ï¿½ï¿½ï¿½ï¿½Ä¤ï¿½Ê¬ï¿½ï¿½ï¿½ë¡£
+//ï¿½Ê²ï¿½ï¿½ï¿½DrawLineï¿½Ï¤Î´Ø¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PSPï¿½Ïºï¿½ï¿½ï¿½ï¿½Î¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¡ï¿½ï¿½ï¿½
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½Ð¤Ê¤ï¿½Ê¤ï¿½ï¿½ï¿½
+//ï¿½È¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¤Ç¡ï¿½ï¿½Ê²ï¿½ï¿½ï¿½defineï¿½Ïºï¿½Â¦ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½É½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ë¡£
 #define FULLSCREEN_WIDTH 512
 #endif
 
@@ -1297,7 +1297,7 @@ void WinDraw_DrawLine(void)
 		{
 			if ( (VCReg2[0]&0x10)&&(VCReg2[1]&1) )
 			{
-				Grp_DrawLine4SP((VCReg1[1]   )&3/*, 1*/);			// È¾Æ©ÌÀ¤Î²¼½àÈ÷
+				Grp_DrawLine4SP((VCReg1[1]   )&3/*, 1*/);			// È¾Æ©ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½
 				pron = tron = 1;
 			}
 			opaq = 1;
@@ -1341,11 +1341,11 @@ void WinDraw_DrawLine(void)
 	case 1:	
 	case 2:	
 		opaq = 1;		// 256 colors
-		if ( (VCReg1[1]&3) <= ((VCReg1[1]>>4)&3) )	// Æ±¤¸ÃÍ¤Î»þ¤Ï¡¢GRP0¤¬Í¥Àè¡Ê¥É¥é¥¹¥Ô¡Ë
+		if ( (VCReg1[1]&3) <= ((VCReg1[1]>>4)&3) )	// Æ±ï¿½ï¿½ï¿½Í¤Î»ï¿½ï¿½Ï¡ï¿½GRP0ï¿½ï¿½Í¥ï¿½ï¿½Ê¥É¥é¥¹ï¿½Ô¡ï¿½
 		{
 			if ( (VCReg2[0]&0x10)&&(VCReg2[1]&1) )
 			{
-				Grp_DrawLine8SP(0);			// È¾Æ©ÌÀ¤Î²¼½àÈ÷
+				Grp_DrawLine8SP(0);			// È¾Æ©ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½
 				tron = pron = 1;
 			}
 			if (VCReg2[1]&4)
@@ -1370,7 +1370,7 @@ void WinDraw_DrawLine(void)
 		{
 			if ( (VCReg2[0]&0x10)&&(VCReg2[1]&1) )
 			{
-				Grp_DrawLine8SP(1);			// È¾Æ©ÌÀ¤Î²¼½àÈ÷
+				Grp_DrawLine8SP(1);			// È¾Æ©ï¿½ï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½
 				tron = pron = 1;
 			}
 			if (VCReg2[1]&4)
@@ -1412,10 +1412,10 @@ void WinDraw_DrawLine(void)
 
 
 //	if ( ( ((VCReg1[0]&0x30)>>4) < (VCReg1[0]&0x03) ) && (gon) )
-//		gdrawed = 1;				// Grp¤è¤êBG¤ÎÊý¤¬¾å
+//		gdrawed = 1;				// Grpï¿½ï¿½ï¿½BGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	if ( ((VCReg1[0]&0x30)>>2) < (VCReg1[0]&0x0c) )
-	{						// BG¤ÎÊý¤¬¾å
+	{						// BGï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if ((VCReg2[1]&0x20)&&(Debug_Text))
 		{
 			Text_DrawLine(1);
@@ -1438,7 +1438,7 @@ void WinDraw_DrawLine(void)
 		}
 	}
 	else
-	{						// Text¤ÎÊý¤¬¾å
+	{						// Textï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if ((VCReg2[1]&0x40)&&(BG_Regs[8]&2)&&(!(BG_Regs[0x11]&2))&&(Debug_Sp))
 		{
 			int s1, s2;
@@ -1459,7 +1459,7 @@ void WinDraw_DrawLine(void)
 				int i;
 				for (i = 16; i < TextDotX + 16; ++i)
 					BG_LineBuf[i] = TextPal[0];
-			} else {		// 20010120 ¡Êàèàá¿§¡Ë
+			} else {		// 20010120 ï¿½ï¿½ï¿½ï¿½ï¿½á¿§ï¿½ï¿½
 				bzero(&BG_LineBuf[16], TextDotX * 2);
 			}
 			ZeroMemory(Text_TrFlag, TextDotX+16);
@@ -1478,7 +1478,7 @@ void WinDraw_DrawLine(void)
 
 
 #if 0
-					// Pri = 3¡Ê°ãÈ¿¡Ë¤ËÀßÄê¤µ¤ì¤Æ¤¤¤ë²èÌÌ¤òÉ½¼¨
+					// Pri = 3ï¿½Ê°ï¿½È¿ï¿½Ë¤ï¿½ï¿½ï¿½ï¿½ê¤µï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½Ì¤ï¿½É½ï¿½ï¿½
 		if ( ((VCReg1[0]&0x30)==0x30)&&(bgon) )
 		{
 			if ( ((VCReg2[0]&0x5d)==0x1d)&&((VCReg1[0]&0x03)!=0x03)&&(tron) )
@@ -1507,13 +1507,13 @@ void WinDraw_DrawLine(void)
 			tdrawed = 1;
 		}
 #endif
-					// Pri = 2 or 3¡ÊºÇ²¼°Ì¡Ë¤ËÀßÄê¤µ¤ì¤Æ¤¤¤ë²èÌÌ¤òÉ½¼¨
-					// ¥×¥é¥¤¥ª¥ê¥Æ¥£¤¬Æ±¤¸¾ì¹ç¤Ï¡¢GRP<SP<TEXT¡©¡Ê¥É¥é¥¹¥Ô¡¢ÅíÅÁ¡¢YsIIIÅù¡Ë
+					// Pri = 2 or 3ï¿½ÊºÇ²ï¿½ï¿½Ì¡Ë¤ï¿½ï¿½ï¿½ï¿½ê¤µï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½Ì¤ï¿½É½ï¿½ï¿½
+					// ï¿½×¥é¥¤ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½Ï¡ï¿½GRP<SP<TEXTï¿½ï¿½ï¿½Ê¥É¥é¥¹ï¿½Ô¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½YsIIIï¿½ï¿½ï¿½ï¿½
 
-					// Grp¤è¤êText¤¬¾å¤Ë¤¢¤ë¾ì¹ç¤ËText¤È¤ÎÈ¾Æ©ÌÀ¤ò¹Ô¤¦¤È¡¢SP¤Î¥×¥é¥¤¥ª¥ê¥Æ¥£¤â
-					// Text¤Ë°ú¤­¤º¤é¤ì¤ë¡©¡Ê¤Ä¤Þ¤ê¡¢Grp¤è¤ê²¼¤Ë¤¢¤Ã¤Æ¤âSP¤¬É½¼¨¤µ¤ì¤ë¡©¡Ë
+					// Grpï¿½ï¿½ï¿½Textï¿½ï¿½ï¿½ï¿½Ë¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Textï¿½È¤ï¿½È¾Æ©ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½È¡ï¿½SPï¿½Î¥×¥é¥¤ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½
+					// Textï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¡©ï¿½Ê¤Ä¤Þ¤ê¡¢Grpï¿½ï¿½ê²¼ï¿½Ë¤ï¿½ï¿½Ã¤Æ¤ï¿½SPï¿½ï¿½É½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¡©ï¿½ï¿½
 
-					// KnightArms¤È¤«¤ò¸«¤ë¤È¡¢È¾Æ©ÌÀ¤Î¥Ù¡¼¥¹¥×¥ì¡¼¥ó¤Ï°ìÈÖ¾å¤Ë¤Ê¤ë¤ß¤¿¤¤¡Ä¡£
+					// KnightArmsï¿½È¤ï¿½ï¿½ò¸«¤ï¿½È¡ï¿½È¾Æ©ï¿½ï¿½ï¿½Î¥Ù¡ï¿½ï¿½ï¿½ï¿½×¥ì¡¼ï¿½ï¿½Ï°ï¿½ï¿½Ö¾ï¿½Ë¤Ê¤ï¿½ß¤ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½
 
 		if ( (VCReg1[0]&0x02) )
 		{
@@ -1556,7 +1556,7 @@ void WinDraw_DrawLine(void)
 			tdrawed = 1;
 		}
 
-					// Pri = 1¡Ê2ÈÖÌÜ¡Ë¤ËÀßÄê¤µ¤ì¤Æ¤¤¤ë²èÌÌ¤òÉ½¼¨
+					// Pri = 1ï¿½ï¿½2ï¿½ï¿½ï¿½Ü¡Ë¤ï¿½ï¿½ï¿½ï¿½ê¤µï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½Ì¤ï¿½É½ï¿½ï¿½
 		if ( ((VCReg1[0]&0x03)==0x01)&&(gon) )
 		{
 			WinDraw_DrawGrpLine(opaq);
@@ -1605,7 +1605,7 @@ void WinDraw_DrawLine(void)
 			tdrawed = 1;
 		}
 
-					// Pri = 0¡ÊºÇÍ¥Àè¡Ë¤ËÀßÄê¤µ¤ì¤Æ¤¤¤ë²èÌÌ¤òÉ½¼¨
+					// Pri = 0ï¿½Êºï¿½Í¥ï¿½ï¿½Ë¤ï¿½ï¿½ï¿½ï¿½ê¤µï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½Ì¤ï¿½É½ï¿½ï¿½
 		if ( (!(VCReg1[0]&0x03))&&(gon) )
 		{
 			WinDraw_DrawGrpLine(opaq);
@@ -1639,13 +1639,13 @@ void WinDraw_DrawLine(void)
 			opaq = 0;
 		}
 
-					// ÆÃ¼ì¥×¥é¥¤¥ª¥ê¥Æ¥£»þ¤Î¥°¥é¥Õ¥£¥Ã¥¯
-		if ( ((VCReg2[0]&0x5c)==0x14)&&(pron) )	// ÆÃ¼ìPri»þ¤Ï¡¢ÂÐ¾Ý¥×¥ì¡¼¥ó¥Ó¥Ã¥È¤Ï°ÕÌ£¤¬Ìµ¤¤¤é¤·¤¤¡Ê¤Ä¤¤¤ó¤Ó¡¼¡Ë
+					// ï¿½Ã¼ï¿½×¥é¥¤ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½ï¿½ï¿½Î¥ï¿½ï¿½ï¿½Õ¥ï¿½ï¿½Ã¥ï¿½
+		if ( ((VCReg2[0]&0x5c)==0x14)&&(pron) )	// ï¿½Ã¼ï¿½Priï¿½ï¿½ï¿½Ï¡ï¿½ï¿½Ð¾Ý¥×¥ì¡¼ï¿½ï¿½Ó¥Ã¥È¤Ï°ï¿½Ì£ï¿½ï¿½Ìµï¿½ï¿½ï¿½é¤·ï¿½ï¿½ï¿½Ê¤Ä¤ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½
 		{
 			WinDraw_DrawPriLine();
 		}
-		else if ( ((VCReg2[0]&0x5d)==0x1c)&&(tron) )	// È¾Æ©ÌÀ»þ¤ËÁ´¤Æ¤¬Æ©ÌÀ¤Ê¥É¥Ã¥È¤ò¥Ï¡¼¥Õ¥«¥é¡¼¤ÇËä¤á¤ë
-		{						// ¡ÊAQUALES¡Ë
+		else if ( ((VCReg2[0]&0x5d)==0x1c)&&(tron) )	// È¾Æ©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½Æ©ï¿½ï¿½ï¿½Ê¥É¥Ã¥È¤ï¿½Ï¡ï¿½ï¿½Õ¥ï¿½ï¿½é¡¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		{						// ï¿½ï¿½AQUALESï¿½ï¿½
 
 #define _DL_SUB(SUFFIX) \
 {								\
@@ -1679,7 +1679,7 @@ void WinDraw_DrawLine(void)
 	}
 }
 
-/********** menu ´ØÏ¢¥ë¡¼¥Á¥ó **********/
+/********** menu ï¿½ï¿½Ï¢ï¿½ë¡¼ï¿½ï¿½ï¿½ï¿½ **********/
 
 struct _px68k_menu {
 	WORD *sbp;  // surface buffer ptr
@@ -1695,11 +1695,11 @@ struct _px68k_menu {
 SDL_Surface *menu_surface;
 #endif
 
-// ²èÌÌ¥¿¥¤¥×¤òÊÑ¹¹¤¹¤ë
+// ï¿½ï¿½ï¿½Ì¥ï¿½ï¿½ï¿½ï¿½×¤ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ï¿½
 enum ScrType {x68k, pc98};
 int scr_type = x68k;
 
-/* sjis¢ªjis¥³¡¼¥ÉÊÑ´¹ */
+/* sjisï¿½ï¿½jisï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ */
 static WORD sjis2jis(WORD w)
 {
 	BYTE wh, wl;
@@ -1718,8 +1718,8 @@ static WORD sjis2jis(WORD w)
 	return (wh * 256 + wl);
 }
 
-/* JIS¥³¡¼¥É¤«¤é0 origin¤Îindex¤ËÊÑ´¹¤¹¤ë */
-/* ¤¿¤À¤·0x2921-0x2f7e¤ÏX68K¤ÎROM¾å¤Ë¤Ê¤¤¤Î¤ÇÈô¤Ð¤¹ */
+/* JISï¿½ï¿½ï¿½ï¿½ï¿½É¤ï¿½ï¿½ï¿½0 originï¿½ï¿½indexï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0x2921-0x2f7eï¿½ï¿½X68Kï¿½ï¿½ROMï¿½ï¿½Ë¤Ê¤ï¿½ï¿½Î¤ï¿½ï¿½ï¿½Ð¤ï¿½ */
 static WORD jis2idx(WORD jc)
 {
 	if (jc >= 0x3000) {
@@ -1737,22 +1737,22 @@ static WORD jis2idx(WORD jc)
 // display width 480, buffer width 512
 #define MENU_WIDTH 512
 #elif defined(ANDROID)
-// display width 800, buffer width 1024 ¤À¤±¤ì¤É 800 ¤Ë¤·¤Ê¤¤¤È¤À¤á
+// display width 800, buffer width 1024 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 800 ï¿½Ë¤ï¿½ï¿½Ê¤ï¿½ï¿½È¤ï¿½ï¿½ï¿½
 #define MENU_WIDTH 800
 #else
 #define MENU_WIDTH 800
 #endif
 
 // fs : font size : 16 or 24
-// È¾³ÑÊ¸»ú¤Î¾ì¹ç¤Ï16bit¤Î¾å°Ì8bit¤Ë¥Ç¡¼¥¿¤òÆþ¤ì¤Æ¤ª¤¯¤³¤È
-// (È¾³ÑorÁ´³Ñ¤ÎÈ½ÃÇ¤¬¤Ç¤­¤ë¤è¤¦¤Ë)
+// È¾ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½Î¾ï¿½ï¿½ï¿½16bitï¿½Î¾ï¿½ï¿½8bitï¿½Ë¥Ç¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// (È¾ï¿½ï¿½orï¿½ï¿½ï¿½Ñ¤ï¿½È½ï¿½Ç¤ï¿½ï¿½Ç¤ï¿½ï¿½ï¿½è¤¦ï¿½ï¿½)
 static DWORD get_font_addr(WORD sjis, int fs)
 {
 	WORD jis, j_idx;
 	BYTE jhi;
 	int fsb; // file size in bytes
 
-	// È¾³ÑÊ¸»ú
+	// È¾ï¿½ï¿½Ê¸ï¿½ï¿½
 	if (isHankaku(sjis >> 8)) {
 		switch (fs) {
 		case 8:
@@ -1766,7 +1766,7 @@ static DWORD get_font_addr(WORD sjis, int fs)
 		}
 	}
 
-	// Á´³ÑÊ¸»ú
+	// ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½
 	if (fs == 16) {
 		fsb = 2 * 16;
 	} else if (fs == 24) {
@@ -1786,13 +1786,13 @@ static DWORD get_font_addr(WORD sjis, int fs)
 #endif
 
 	if (jhi >= 0x21 && jhi <= 0x28) {
-		// Èó´Á»ú
+		// ï¿½ï¿½ï¿½ï¿½ï¿½
 		return  ((fs == 16)? 0x0 : 0x40000) + j_idx * fsb;
 	} else if (jhi >= 0x30 && jhi <= 0x74) {
-		// Âè°ì¿å½à/ÂèÆó¿å½à
+		// ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return  ((fs == 16)? 0x5e00 : 0x4d380) + j_idx * fsb;
 	} else {
-		// ¤³¤³¤Ë¤¯¤ë¤³¤È¤Ï¤Ê¤¤¤Ï¤º
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ë¤ï¿½ï¿½ë¤³ï¿½È¤Ï¤Ê¤ï¿½ï¿½Ï¤ï¿½
 		return -1;
 	}
 }
@@ -1803,19 +1803,19 @@ static void set_mcolor(WORD c)
 	p6m.mcolor = c;
 }
 
-// mbcolor = 0 ¤Ê¤éÆ©ÌÀ¿§¤È¤¹¤ë
+// mbcolor = 0 ï¿½Ê¤ï¿½Æ©ï¿½ï¿½ï¿½ï¿½ï¿½È¤ï¿½ï¿½ï¿½
 static void set_mbcolor(WORD c)
 {
 	p6m.mbcolor = c;
 }
 
-// ¥°¥é¥Õ¥£¥Ã¥¯ºÂÉ¸
+// ï¿½ï¿½ï¿½ï¿½Õ¥ï¿½ï¿½Ã¥ï¿½ï¿½ï¿½É¸
 static void set_mlocate(int x, int y)
 {
 	p6m.ml_x = x, p6m.ml_y = y;
 }
 
-// ¥­¥ã¥é¥¯¥¿Ê¸»ú¤ÎºÂÉ¸ (²£¼´¤Ï1ºÂÉ¸¤¬È¾³ÑÊ¸»úÉý¤Ë¤Ê¤ë)
+// ï¿½ï¿½ï¿½ï¿½é¥¯ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½Îºï¿½É¸ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½É¸ï¿½ï¿½È¾ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½Ë¤Ê¤ï¿½)
 static void set_mlocateC(int x, int y)
 {
 	p6m.ml_x = x * p6m.mfs / 2, p6m.ml_y = y * p6m.mfs;
@@ -1838,9 +1838,9 @@ static WORD *get_ml_ptr()
 	return p6m.mlp;
 }
 
-// ¡¦È¾³ÑÊ¸»ú¤Î¾ì¹ç¤Ï16bit¤Î¾å°Ì8bit¤Ë¥Ç¡¼¥¿¤òÆþ¤ì¤Æ¤ª¤¯¤³¤È
-//   (È¾³ÑorÁ´³Ñ¤ÎÈ½ÃÇ¤¬¤Ç¤­¤ë¤è¤¦¤Ë)
-// ¡¦É½¼¨¤·¤¿Ê¬cursor¤ÏÀè¤Ë°ÜÆ°¤¹¤ë
+// ï¿½ï¿½È¾ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½Î¾ï¿½ï¿½ï¿½16bitï¿½Î¾ï¿½ï¿½8bitï¿½Ë¥Ç¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//   (È¾ï¿½ï¿½orï¿½ï¿½ï¿½Ñ¤ï¿½È½ï¿½Ç¤ï¿½ï¿½Ç¤ï¿½ï¿½ï¿½è¤¦ï¿½ï¿½)
+// ï¿½ï¿½É½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¬cursorï¿½ï¿½ï¿½ï¿½Ë°ï¿½Æ°ï¿½ï¿½ï¿½ï¿½
 static void draw_char(WORD sjis)
 {
 	DWORD f;
@@ -1858,7 +1858,7 @@ static void draw_char(WORD sjis)
 	if (f < 0)
 		return;
 
-	// h=8¤ÏÈ¾³Ñ¤Î¤ß
+	// h=8ï¿½ï¿½È¾ï¿½Ñ¤Î¤ï¿½
 	w = (h == 8)? 8 : (isHankaku(sjis >> 8)? h / 2 : h);
 
 	for (i = 0; i < h; i++) {
@@ -1892,8 +1892,8 @@ static void draw_str(char *cp)
 
 	for (i = 0; i < len; i++) {
 		if (isHankaku(*s)) {
-			// ºÇ½é¤Î8bit¤ÇÈ¾Á´³Ñ¤òÈ½ÃÇ¤¹¤ë¤Î¤ÇÈ¾³Ñ¤Î¾ì¹ç¤Ï
-			// ¤¢¤é¤«¤¸¤á8bitº¸¥·¥Õ¥È¤·¤Æ¤ª¤¯
+			// ï¿½Ç½ï¿½ï¿½8bitï¿½ï¿½È¾ï¿½ï¿½ï¿½Ñ¤ï¿½È½ï¿½Ç¤ï¿½ï¿½ï¿½Î¤ï¿½È¾ï¿½Ñ¤Î¾ï¿½ï¿½ï¿½
+			// ï¿½ï¿½ï¿½é¤«ï¿½ï¿½ï¿½ï¿½8bitï¿½ï¿½ï¿½ï¿½ï¿½Õ¥È¤ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½
 			draw_char((WORD)*s << 8);
 			s++;
 		} else {
@@ -1902,7 +1902,7 @@ static void draw_str(char *cp)
 			s += 2;
 			i++;
 		}
-		// 8x8ÉÁ²è(¥½¥Õ¥È¥­¡¼¥Ü¡¼¥É¤ÎFUNC¥­¡¼¤ÏÊ¸»úÉý¤ò½Ì¤á¤ë)
+		// 8x8ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Õ¥È¥ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½É¤ï¿½FUNCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¤ï¿½ï¿½)
 		if (p6m.mfs == 8) {
 			p6m.ml_x -= 3;
 		}
@@ -1912,13 +1912,13 @@ static void draw_str(char *cp)
 int WinDraw_MenuInit(void)
 {
 #if defined(PSP)
-	// menu¤ÏÂ®ÅÙÃÙ¤¯¤ÆÎÉ¤¤¤Î¤Ç¥á¥¤¥ó¥á¥â¥ê¤«¤émalloc()
+	// menuï¿½ï¿½Â®ï¿½ï¿½ï¿½Ù¤ï¿½ï¿½ï¿½ï¿½É¤ï¿½ï¿½Î¤Ç¥á¥¤ï¿½ï¿½ï¿½ï¿½ê¤«ï¿½ï¿½malloc()
 	menu_buffer = malloc(512 * 512 * 2);
 	if (menu_buffer == NULL) {
 		return FALSE;
 	}
 	set_sbp(menu_buffer);
-	// »ÈÍÑ¥Õ¥©¥ó¥È¤ÎÊÑ¹¹ 24 or 16
+	// ï¿½ï¿½ï¿½Ñ¥Õ¥ï¿½ï¿½ï¿½È¤ï¿½ï¿½Ñ¹ï¿½ 24 or 16
 	set_mfs(16);
 #elif defined(USE_OGLES11)
 	//
@@ -1960,7 +1960,7 @@ static void psp_draw_menu(void)
 	sceGuClearDepth(0);
 	sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
 
-	// º¸È¾Ê¬
+	// ï¿½ï¿½È¾Ê¬
 	vtxm->u = 0;
 	vtxm->v = 0;
 	vtxm->color = 0;
@@ -2000,19 +2000,19 @@ static void ogles11_draw_menu(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	glBindTexture(GL_TEXTURE_2D, texid[9]);
-	//ScrBuf¤«¤é800x600¤ÎÎÎ°è¤òÀÚ¤ê½Ð¤·¤Æ¥Æ¥¯¥¹¥Á¥ã¤ËÅ¾Á÷
+	//ScrBufï¿½ï¿½ï¿½ï¿½800x600ï¿½ï¿½ï¿½Î°ï¿½ï¿½ï¿½Ú¤ï¿½Ð¤ï¿½ï¿½Æ¥Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¾ï¿½ï¿½
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 800, 600, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, menu_buffer);
 
-	// Texture ¤«¤éÉ¬Í×¤ÊÉôÊ¬¤òÈ´¤­½Ð¤¹
-	// TexutreºÂÉ¸¤Ï0.0f¤«¤é1.0f¤Î´Ö
+	// Texture ï¿½ï¿½ï¿½ï¿½É¬ï¿½×¤ï¿½ï¿½ï¿½Ê¬ï¿½ï¿½È´ï¿½ï¿½ï¿½Ð¤ï¿½
+	// Texutreï¿½ï¿½É¸ï¿½ï¿½0.0fï¿½ï¿½ï¿½ï¿½1.0fï¿½Î´ï¿½
 	SET_GLFLOATS(texture_coordinates,
 		     0.0f, (GLfloat)600/1024,
 		     0.0f, 0.0f,
 		     (GLfloat)800/1024, (GLfloat)600/1024,
 		     (GLfloat)800/1024, 0.0f);
 
-	// ¼Âµ¡¤Î²òÁüÅÙ(realdisp_w x realdisp_h)¤Ë´Ø·¸¤Ê¤¯¡¢
-	// ºÂÉ¸¤Ï800x600
+	// ï¿½Âµï¿½ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½(realdisp_w x realdisp_h)ï¿½Ë´Ø·ï¿½ï¿½Ê¤ï¿½ï¿½ï¿½
+	// ï¿½ï¿½É¸ï¿½ï¿½800x600
 	SET_GLFLOATS(vertices,
 		     40.0f, (GLfloat)600,
 		     40.0f, 0.0f,
@@ -2039,16 +2039,16 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 	int i, drv;
 	char tmp[256];
 
-// ¥½¥Õ¥È¥¦¥§¥¢¥­¡¼¥Ü¡¼¥ÉÉÁ²è»þ¤Ëset_sbp(kbd_buffer)¤µ¤ì¤Æ¤¤¤ë¤Î¤ÇÌá¤¹
+// ï¿½ï¿½ï¿½Õ¥È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½set_sbp(kbd_buffer)ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½Î¤ï¿½ï¿½á¤¹
 #if defined(PSP) || defined(USE_OGLES11)
 	set_sbp(menu_buffer);
 #endif
-// ¥½¥Õ¥È¥¦¥§¥¢¥­¡¼¥Ü¡¼¥ÉÉÁ²è»þ¤Ëset_mfs(16)¤µ¤ì¤Æ¤¤¤ë¤Î¤ÇÌá¤¹
+// ï¿½ï¿½ï¿½Õ¥È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½set_mfs(16)ï¿½ï¿½ï¿½ï¿½Æ¤ï¿½ï¿½ï¿½Î¤ï¿½ï¿½á¤¹
 #if defined(ANDROID) || TARGET_OS_IPHONE
 	set_mfs(24);
 #endif
 
-	// ¥¿¥¤¥È¥ë
+	// ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½
 	if (scr_type == x68k) {
 		set_mcolor(0x07ff); // cyan
 		set_mlocateC(0, 0);
@@ -2074,7 +2074,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		draw_str(pc98_title2_str);
 	}
 
-	// ¿¿¤óÃæ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (scr_type == x68k) {
 		set_mcolor(0xffff);
 		set_mlocate(3 * p6m.mfs / 2, 3.5 * p6m.mfs);
@@ -2082,7 +2082,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		set_mlocate(17 * p6m.mfs / 2, 3.5 * p6m.mfs);
 		draw_str(waku_val_str[1]);
 
-		// ¿¿¤óÃæÏÈ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		set_mcolor(0xffe0); // yellow
 		set_mlocateC(1, 4);
 		draw_str(waku_str);
@@ -2094,7 +2094,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		draw_str(waku3_str);
 	}
 
-	// ¥¢¥¤¥Æ¥à/¥­¡¼¥ï¡¼¥É
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¡¼ï¿½ï¿½
 	set_mcolor(0xffff);
 	for (i = 0; i < 7; i++) {
 		set_mlocateC(3, 5 + i);
@@ -2108,7 +2108,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		draw_str(menu_item_key[i + mkey_pos]);
 	}
 
-	// ¥¢¥¤¥Æ¥à/¸½ºßÃÍ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	set_mcolor(0xffff);
 	set_mbcolor(0x0);
 	for (i = 0; i < 7; i++) {
@@ -2138,7 +2138,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 			if (p[0] == '\0') {
 				draw_str(" -- no disk --");
 			} else {
-				// ÀèÆ¬¤Î¥«¥ì¥ó¥È¥Ç¥£¥ì¥¯¥È¥êÌ¾¤òÉ½¼¨¤·¤Ê¤¤
+				// ï¿½ï¿½Æ¬ï¿½Î¥ï¿½ï¿½ï¿½ï¿½È¥Ç¥ï¿½ï¿½ì¥¯ï¿½È¥ï¿½Ì¾ï¿½ï¿½É½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¤ï¿½
 #ifdef PANDORA
 				char p2[MAX_PATH+1];
 				if (!strncmp(cur_dir_str, p, cur_dir_slen)) {
@@ -2162,7 +2162,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 	}
 
 	if (scr_type == x68k) {
-		// ²¼ÏÈ
+		// ï¿½ï¿½ï¿½ï¿½
 		set_mcolor(0x07ff); // cyan
 		set_mbcolor(0x0);
 		set_mlocateC(0, 13);
@@ -2175,7 +2175,7 @@ void WinDraw_DrawMenu(int menu_state, int mkey_pos, int mkey_y, int *mval_y)
 		draw_str(swaku3_str);
 	}
 
-	// ¥­¥ã¥×¥·¥ç¥ó
+	// ï¿½ï¿½ï¿½ï¿½×¥ï¿½ï¿½ï¿½ï¿½
 	set_mcolor(0xffff);
 	set_mbcolor(0x0);
 	set_mlocateC(2, 14);
@@ -2206,11 +2206,11 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 {
 	int i;
 
-	// ²¼ÏÈ
+	// ï¿½ï¿½ï¿½ï¿½
 	//set_mcolor(0xf800); // red
 	//set_mcolor(0xf81f); // magenta
 	set_mcolor(0xffff);
-	set_mbcolor(0x1); // 0x0¤À¤ÈÆ©²á¥â¡¼¥É
+	set_mbcolor(0x1); // 0x0ï¿½ï¿½ï¿½ï¿½Æ©ï¿½ï¿½â¡¼ï¿½ï¿½
 	set_mlocateC(1, 1);
 	draw_str(swaku_str);
 	for (i = 2; i < 16; i++) {
@@ -2231,7 +2231,7 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 			set_mcolor(0xffff);
 			set_mbcolor(0x1);
 		}
-		// ¥Ç¥£¥ì¥¯¥È¥ê¤À¤Ã¤¿¤é¥Õ¥¡¥¤¥ëÌ¾¤ò[]¤Ç°Ï¤¦
+		// ï¿½Ç¥ï¿½ï¿½ì¥¯ï¿½È¥ï¿½ï¿½ï¿½Ã¤ï¿½ï¿½ï¿½Õ¥ï¿½ï¿½ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½[]ï¿½Ç°Ï¤ï¿½
 		set_mlocateC(3, i + 2);
 		if (mfl->type[i + mfl->ptr]) draw_str("[");
 #ifdef PANDORA
@@ -2248,7 +2248,7 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 		if (mfl->type[i + mfl->ptr]) draw_str("]");
 	}
 
-	set_mbcolor(0x0); // Æ©²á¥â¡¼¥É¤ËÌá¤·¤Æ¤ª¤¯
+	set_mbcolor(0x0); // Æ©ï¿½ï¿½â¡¼ï¿½É¤ï¿½ï¿½á¤·ï¿½Æ¤ï¿½ï¿½ï¿½
 
 #if defined(PSP)
 	psp_draw_menu();
@@ -2280,7 +2280,7 @@ void WinDraw_ClearMenuBuffer(void)
 
 }
 
-/********** ¥½¥Õ¥È¥¦¥§¥¢¥­¡¼¥Ü¡¼¥ÉÉÁ²è **********/
+/********** ï¿½ï¿½ï¿½Õ¥È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ **********/
 
 #if defined(PSP) || defined(ANDOIRD)
 
@@ -2288,13 +2288,13 @@ void WinDraw_ClearMenuBuffer(void)
 // display width 480, buffer width 512
 #define KBDBUF_WIDTH 512
 #elif defined(USE_OGLES11)
-// display width 800, buffer width 1024 ¤À¤±¤ì¤É 800 ¤Ë¤·¤Ê¤¤¤È¤À¤á
+// display width 800, buffer width 1024 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 800 ï¿½Ë¤ï¿½ï¿½Ê¤ï¿½ï¿½È¤ï¿½ï¿½ï¿½
 #define KBDBUF_WIDTH 800
 #endif
 
 #define KBD_FS 16 // keyboard font size : 16
 
-// ¥­¡¼¤òÈ¿Å¾¤¹¤ë
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¿Å¾ï¿½ï¿½ï¿½ï¿½
 void WinDraw_reverse_key(int x, int y)
 {
 	WORD *p;
@@ -2319,7 +2319,7 @@ static void draw_kbd_to_tex()
 	int i, x, y;
 	WORD *p;
 
-	// SJIS ´Á»ú¥³¡¼¥É
+	// SJIS ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	char zen[] = {0x91, 0x53, 0x00};
 	char larw[] = {0x81, 0xa9, 0x00};
 	char rarw[] = {0x81, 0xa8, 0x00};
@@ -2375,7 +2375,7 @@ static void draw_kbd_to_tex()
 	set_mbcolor(0);
 	set_mcolor(0);
 
-	// ¥­¡¼¥Ü¡¼¥É¤ÎÇØ·Ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ü¡ï¿½ï¿½É¤ï¿½ï¿½Ø·ï¿½
 	p = kbd_buffer;
 	for (y = 0; y < kbd_h; y++) {
 		for (x = 0; x < kbd_w; x++) {
@@ -2384,14 +2384,14 @@ static void draw_kbd_to_tex()
 		p = p + KBDBUF_WIDTH - kbd_w;
 	}
 
-	// ¥­¡¼¤ÎÉÁ²è
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (i = 0; kbd_key[i].x != -1; i++) {
 		p = kbd_buffer + kbd_key[i].y * KBDBUF_WIDTH + kbd_key[i].x;
 		for (y = 0; y < kbd_key[i].h; y++) {
 			for (x = 0; x < kbd_key[i].w; x++) {
 				if (x == (kbd_key[i].w - 1)
 				    || y == (kbd_key[i].h - 1)) {
-					// ¥­¡¼¤Ë±Æ¤ò¤Ä¤±Î©ÂÎÅª¤Ë¸«¤»¤ë
+					// ï¿½ï¿½ï¿½ï¿½ï¿½Ë±Æ¤ï¿½Ä¤ï¿½Î©ï¿½ï¿½Åªï¿½Ë¸ï¿½ï¿½ï¿½ï¿½ï¿½
 					*p++ = 0x0000;
 				} else {
 					*p++ = 0xffff;
@@ -2400,7 +2400,7 @@ static void draw_kbd_to_tex()
 			p = p + KBDBUF_WIDTH - kbd_key[i].w;
 		}
 		if (strlen(kbd_key[i].s) == 3 && *(kbd_key[i].s) == 'F') {
-			// FUNC¥­¡¼¹ï°õÉÁ²è
+			// FUNCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			set_mlocate(kbd_key[i].x + kbd_key[i].w / 2
 				    - strlen(kbd_key[i].s) * (8 / 2)
 				    + (strlen(kbd_key[i].s) - 1) * 3 / 2,
@@ -2409,7 +2409,7 @@ static void draw_kbd_to_tex()
 			draw_str(kbd_key[i].s);
 			set_mfs(KBD_FS);
 		} else {
-			// ¹ï°õ¤Ï¾å²¼º¸±¦¤È¤â¥»¥ó¥¿¥ê¥ó¥°¤¹¤ë
+			// ï¿½ï¿½ï¿½ï¿½Ï¾å²¼ï¿½ï¿½ï¿½ï¿½ï¿½È¤â¥»ï¿½ó¥¿¥ï¿½ó¥°¤ï¿½ï¿½ï¿½
 			set_mlocate(kbd_key[i].x + kbd_key[i].w / 2
 				    - strlen(kbd_key[i].s) * (KBD_FS / 2 / 2),
 				    kbd_key[i].y

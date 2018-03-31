@@ -118,11 +118,11 @@ int mval_y[] = {0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 1, 1, 1, 0, 0, 1};
 enum menu_id {M_SYS, M_JOM, M_FD0, M_FD1, M_HD0, M_HD1, M_FS, M_SR, M_VKS, M_VBS, M_HJS, M_NW, M_JK, M_STCH, M_SCNL, M_CLOCK, M_RAM};
 
 // Max # of characters is 15.
-char menu_item_key[][17] = {"SYSTEM", "Joy/Mouse", "FDD0", "FDD1", "HDD0", "HDD1", "Frame Skip", "Sound Rate", "VKey Size", "VBtn Swap", "HwJoy Setting", "No Wait Mode", "JoyKey", "Stretched", "Scanlines", "ClockMHz", "RamSize", "uhyo", ""};
+char menu_item_key[][15] = {"SYSTEM", "Joy/Mouse", "FDD0", "FDD1", "HDD0", "HDD1", "Frame Skip", "Sound Rate", "VKey Size", "VBtn Swap", "HwJoy Setting", "No Wait Mode", "JoyKey", "Stretched", "Scanlines", "ClockMHz", "RamSize", "uhyo", ""};
 
 // Max # of characters is 30.
 // Max # of items including terminater `""' in each line is 15.
-char menu_items[][17][30] = {
+char menu_items[][15][30] = {
 	{"RESET", "NMI RESET", "QUIT", ""},
 	{"Joystick", "Mouse", ""},
 	{"dummy", "EJECT", ""},
@@ -138,7 +138,7 @@ char menu_items[][17][30] = {
 	{"Off", "On", ""},
 	{"Off", "On", ""},
 	{"Off", "1/4", "1/2", "3/4", "Full", ""},
-	{"10 MHz", "16 MHz", "25 MHz", "33 MHz", "66 MHz", "100 MHz", "150 MHz", "200 MHz"},
+	{"10 MHz", "16 MHz", "25 MHz", "33 MHz", "66 MHz", "100 MHz"},
 	{"1MB", "2MB", "3MB", "4MB", "5MB", "6MB", "7MB", "8MB", "9MB", "10MB", "11MB", "12MB"}
 };
 
@@ -266,8 +266,6 @@ WinUI_Init(void)
 		case 33: mval_y[M_CLOCK] = 3; break;
 		case 66: mval_y[M_CLOCK] = 4; break;
 		case 100: mval_y[M_CLOCK] = 5; break;
-		case 150: mval_y[M_CLOCK] = 6; break;
-		case 200: mval_y[M_CLOCK] = 7; break;
 		default: mval_y[M_CLOCK] = 0;
 	}
 	mval_y[M_RAM] = (ram_size/0x100000)-1;
@@ -600,8 +598,8 @@ static void menu_scanlines(int v)
 
 static void menu_clockmhz(int v)
 {
-	const int clocks[] = {10, 16, 25, 33, 66, 100, 150, 200};
-	if (v<8) clockmhz=clocks[v];
+	const int clocks[] = {10, 16, 25, 33, 66, 100};
+	if (v<6) clockmhz=clocks[v];
 	else clockmhz = 10;
 }
 

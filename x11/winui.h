@@ -30,8 +30,8 @@ struct menu_flist {
 	int y;
 };
 
-extern char menu_item_key[][17];
-extern char menu_items[][17][30];
+extern char menu_item_key[][15];
+extern char menu_items[][15][30];
 
 int WinUI_get_drv_num(int key);
 

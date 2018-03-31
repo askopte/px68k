@@ -9,7 +9,7 @@ char pc98_title2_str[] = "„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ Copyright (C) hissori
 char pc98_title3_str[] = "                        (Œ»İ‚Ìİ’è’l)";
 
 
-char waku_val_str[][10] = {"·°Ü°ÄŞ", "Œ»İ’l"};
+char waku_val_str[][14] = {"Keyword", "Current value"};
 
 char waku_str[]  = "„¬„ª„ª„ª„ª„ª„ª„±„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„­";
 char waku2_str[] = "„«            „«                                        „«";
@@ -19,14 +19,50 @@ char swaku_str[]  = "„¬„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„
 char swaku2_str[] = "„«                                                        „«";
 char swaku3_str[] = "„¯„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„ª„®";
 
-char item_cap[][60] = {"ƒVƒXƒeƒ€‚ğ[ƒŠƒZƒbƒg/NMIƒŠƒZƒbƒg/I—¹]‚µ‚Ü‚·", "[‰¼‘zƒpƒbƒh/‰¼‘zƒ}ƒEƒX]‚ğ‘I‘ğ‚µ‚Ü‚·", "ƒtƒƒbƒs[‚O‚Ì[“ü‚ê‘Ö‚¦/ƒCƒWƒFƒNƒg]‚ğ‚µ‚Ü‚·", "ƒtƒƒbƒs[‚P‚Ì[“ü‚ê‘Ö‚¦/ƒCƒWƒFƒNƒg]‚ğ‚µ‚Ü‚·", "ƒn[ƒhƒfƒBƒXƒN‚O‚Ì[“ü‚ê‘Ö‚¦/ƒCƒWƒFƒNƒg]‚ğ‚µ‚Ü‚·", "ƒn[ƒhƒfƒBƒXƒN‚P‚Ì[“ü‚ê‘Ö‚¦/ƒCƒWƒFƒNƒg]‚ğ‚µ‚Ü‚·", "ƒtƒŒ[ƒ€ƒXƒLƒbƒv‚ğİ’è‚µ‚Ü‚·", "ƒTƒEƒ“ƒh‚Ìo—Íü”g”‚ğİ’è‚µ‚Ü‚·(Ÿ‰ñ‹N“®‚É—LŒø)", "‰¼‘zƒpƒbƒhA‰¼‘zƒ{ƒ^ƒ“‚Ì‘å‚«‚³‚ğ’²®‚µ‚Ü‚·", "‰¼‘zƒ{ƒ^ƒ“‚ÌˆÊ’u‚ğŒğŠ·‚µ‚Ü‚·", "•¨—Pad‚Ìİ’è‚ğ‚µ‚Ü‚·", "No Wait Mode‚ğİ’è‚µ‚Ü‚·", "JoyKey‚ğİ’è‚µ‚Ü‚·"};
+char item_cap[][60] = {
+    "Reset / NMI reset / terminate system", 
+    "Select [Virtual Pad / Virtual Mouse]", 
+    "Change / Eject floppy 0", 
+    "Change / Eject floppy 1", 
+    "Change / Eject HDD 0", 
+    "Change / Eject HDD 1", 
+    "Set frame skip", 
+    "Set Sound frequency", 
+    "Adjust the size of virtual pad and button", 
+    "Change the position of the virtual button", 
+    "Configure the pad", 
+    "Set No Wait Mode", 
+    "Set up JoyKey",
+    "Set Stech Mode",
+    "Set Scalines Mode",
+    "Set ClockSpeed in MHz",
+    "Set RamSize in MB"
+};
 
 #if defined (PSP)
-#define CAP_BTN_STR "[›]ƒ{ƒ^ƒ“"
+#define CAP_BTN_STR "[›] button"
 #elif defined (ANDROID)
-#define CAP_BTN_STR "[TRG1]ƒ{ƒ^ƒ“"
+#define CAP_BTN_STR "[TRG 1] button"
 #else
-#define CAP_BTN_STR "[ƒŠƒ^[ƒ“]ƒL["
+#define CAP_BTN_STR "[Return] key"
 #endif
 
-char item_cap2[][50] = {"ª«‚Å‘I‘ğ‚µA"CAP_BTN_STR"‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µA"CAP_BTN_STR"‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µA"CAP_BTN_STR"‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µA"CAP_BTN_STR"‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µA"CAP_BTN_STR"‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µA"CAP_BTN_STR"‚ÅÀs‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢B", "ª«‚Å‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğŒãA•¨—ƒpƒbƒh‚Ìİ’è‚ğ‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢", "ª«‚Å‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢"};
+char item_cap2[][50] = {
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«", 
+    "Choose with ª«", 
+    "Choose with ª«", 
+    "Choose with ª«", 
+    "After selecting with ª «, you set the pad", 
+    "Choose with ª«, Select with "CAP_BTN_STR, 
+    "Choose with ª«, Select with "CAP_BTN_STR,
+    "Choose with ª«, Select with "CAP_BTN_STR,
+    "Choose with ª«, Select with "CAP_BTN_STR,
+    "Choose with ª«, Select with "CAP_BTN_STR,
+    "Choose with ª«, Select with "CAP_BTN_STR,
+};
