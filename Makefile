@@ -8,6 +8,9 @@ TAGS	 = etags
 DEPEND	 = gccmakedep
 DEPEND_DEFINES =
 
+# Enable Cyclone M68k ASM Emu
+#CYCLONE = 1
+
 # for debug
 CDEBUGFLAGS = -g -O0 -fno-strict-aliasing
 
@@ -73,11 +76,6 @@ SDL_LIB=	`$(SDL_CONFIG) --libs`
 # -lSDL_gfx
 endif
 
-ifdef CYCLONE
-CFLAGS += -DCYCLONE
-CXXFLAGS += -DCYCLONE
-endif
-
 ifeq ($(shell uname -m),armv6l)
 	MOPT=
 else
@@ -86,11 +84,17 @@ ifeq ($(shell uname -m),armv7l)
 	CDEBUGFLAGS+= -DUSE_OGLES11
 	SDL_LIB= `$(SDL_CONFIG) --libs`
 	SDL_LIB+= -lGLES_CM -lEGL
-        MOPT= -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char -fsingle-precision-constant
+    MOPT= -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char -fsingle-precision-constant
 	# -flto -flto-odr-type-merging
+	#Config for Pandora, enable Cyclone
+	CYCLONE = 1
 else
 	MOPT= -m32
 endif
+endif
+
+ifdef CYCLONE
+CDEBUGFLAGS += -DCYCLONE
 endif
 
 LDLIBS = -lm
