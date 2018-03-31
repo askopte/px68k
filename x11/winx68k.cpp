@@ -252,11 +252,20 @@ int
 WinX68k_Reset(void)
 {
 	OPM_Reset();
+	#ifdef CYCLONE
+	m68000_reset();
+	m68000_set_reg(M68K_A7, (IPL[0x30001]<<24)|(IPL[0x30000]<<16)|(IPL[0x30003]<<8)|IPL[0x30002]);
+	m68000_set_reg(M68K_PC, (IPL[0x30005]<<24)|(IPL[0x30004]<<16)|(IPL[0x30007]<<8)|IPL[0x30006]);
 
+	#else
 	C68k_Reset(&C68K);
+	/*
 	C68k_Set_Reg(&C68K, C68K_A7, (IPL[0x30001]<<24)|(IPL[0x30000]<<16)|(IPL[0x30003]<<8)|IPL[0x30002]);
 	C68k_Set_Reg(&C68K, C68K_PC, (IPL[0x30005]<<24)|(IPL[0x30004]<<16)|(IPL[0x30007]<<8)|IPL[0x30006]);
-
+	*/
+	C68k_Set_AReg(&C68K, 7, (IPL[0x30001]<<24)|(IPL[0x30000]<<16)|(IPL[0x30003]<<8)|IPL[0x30002]);
+	C68k_Set_PC(&C68K, (IPL[0x30005]<<24)|(IPL[0x30004]<<16)|(IPL[0x30007]<<8)|IPL[0x30006]);
+	#endif
 	Memory_Init();
 	CRTC_Init();
 	DMA_Init();
@@ -277,7 +286,7 @@ WinX68k_Reset(void)
 	MIDI_Init();
 	//WinDrv_Init();
 
-	C68K.ICount = 0;
+	//C68K.ICount = 0;
 	m68000_ICountBk = 0;
 	ICount = 0;
 
@@ -381,7 +390,7 @@ void WinX68k_Exec(void)
 
 	do {
 		int m, n = (ICount>CLOCK_SLICE)?CLOCK_SLICE:ICount;
-		C68K.ICount = m68000_ICountBk = 0;			// 割り込み発生前に与えておかないとダメ（CARAT）
+		//C68K.ICount = m68000_ICountBk = 0;			// 割り込み発生前に与えておかないとダメ（CARAT）
 
 		if ( hsync ) {
 			hsync = 0;
@@ -431,9 +440,16 @@ void WinX68k_Exec(void)
 				  fprintf(fp, "A0:%08X A1:%08X A2:%08X A3:%08X A4:%08X A5:%08X A6:%08X A7:%08X SR:%04X\n", C68K.A[0], C68K.A[1], C68K.A[2], C68K.A[3], C68K.A[4], C68K.A[5], C68K.A[6], C68K.A[7], C68k_Get_Reg(&C68K, C68K_SR) >> 8/* regs.sr_high*/);
 					fprintf(fp, "<%04X> (%08X ->) %08X : %s\n", Memory_ReadW(C68k_Get_Reg(&C68K, C68K_PC)), oldpc, C68k_Get_Reg(&C68K, C68K_PC), buf);
 				}
+				#ifdef CYCLONE
+				oldpc = m68000_get_reg(M68K_PC);
+				// * C68KICount = 1;
+				m68000_execute(1);
+				#else
 				oldpc = C68k_Get_Reg(&C68K, C68K_PC);
-				C68K.ICount = 1;
-				C68k_Exec(&C68K, C68K.ICount);
+				//C68K.ICount = 1;
+				//C68k_Exec(&C68K, C68K.ICount);
+				C68k_Exec(&C68K, 1);
+				#endif
 			}
 			fclose(fp);
 			usedclk = clk_line = HSYNC_CLK;
@@ -442,16 +458,21 @@ void WinX68k_Exec(void)
 		else
 #endif
 		{
-			C68K.ICount = n;
-			C68k_Exec(&C68K, C68K.ICount);
-			m = (n-C68K.ICount-m68000_ICountBk);			// 経過クロック数
+			//C68K.ICount = n;
+			#ifdef CYCLONE
+			m68000_execute(n);
+			#else
+			C68k_Exec(&C68K, n);
+			#endif
+			m = (n-m68000_ICountBk);
+			//m = (n-C68K.ICount-m68000_ICountBk);			// clockspeed progress
 			ClkUsed += m*10;
 			usedclk = ClkUsed/clkdiv;
 			clk_line += usedclk;
 			ClkUsed -= usedclk*clkdiv;
 			ICount -= m;
 			clk_count += m;
-			C68K.ICount = m68000_ICountBk = 0;
+			//C68K.ICount = m68000_ICountBk = 0;
 		}
 
 		MFP_Timer(usedclk);
