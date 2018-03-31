@@ -80,7 +80,7 @@ ifeq ($(shell uname -m),armv7l)
 	CDEBUGFLAGS+= -DUSE_OGLES11
 	SDL_LIB= `$(SDL_CONFIG) --libs`
 	SDL_LIB+= -lGLES_CM -lEGL
-        MOPT= -mcpu=cortex-a8 -mfpu=neon -fsigned-char -fsingle-precision-constant
+        MOPT= -mcpu=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fsigned-char -fsingle-precision-constant
 	# -flto -flto-odr-type-merging
 else
 	MOPT= -m32
